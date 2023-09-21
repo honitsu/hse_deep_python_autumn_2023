@@ -1,0 +1,26 @@
+[egor@vzpn FileGenerator]$ flake8 file_generator.py
+[egor@vzpn FileGenerator]$ pylint file_generator.py
+
+-------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 8.57/10, +1.43)
+
+[egor@vzpn FileGenerator]$ flake8 test_file_generator.py
+[egor@vzpn FileGenerator]$ pylint test_file_generator.py
+
+-------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 8.45/10, +1.55)
+
+[egor@vzpn FileGenerator]$ coverage run test_file_generator.py
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.006s
+
+OK
+[egor@vzpn FileGenerator]$ coverage report -m
+Name                     Stmts   Miss  Cover   Missing
+------------------------------------------------------
+file_generator.py           14      0   100%
+test_file_generator.py      60      0   100%
+------------------------------------------------------
+TOTAL                       74      0   100%
+[egor@vzpn FileGenerator]$
