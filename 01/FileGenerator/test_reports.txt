@@ -1,3 +1,9 @@
+[egor@vzpn FileGenerator]$ black -l 79 .
+reformatted file_generator.py
+reformatted test_file_generator.py
+
+All done! ✨ 🍰 ✨
+2 files reformatted.
 [egor@vzpn FileGenerator]$ flake8 file_generator.py
 [egor@vzpn FileGenerator]$ pylint file_generator.py
 

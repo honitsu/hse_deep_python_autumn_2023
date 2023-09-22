@@ -1,3 +1,9 @@
+[egor@vzpn SomeModel]$ black -l 79 .
+reformatted some_model.py
+reformatted test_some_model.py
+
+All done! ✨ 🍰 ✨
+2 files reformatted.
 [egor@vzpn SomeModel]$ flake8 some_model.py
 [egor@vzpn SomeModel]$ pylint some_model.py
 ************* Module some_model
