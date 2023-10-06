@@ -3,7 +3,7 @@ import unittest
 from movie_descriptors import Rating, Director, Actors
 
 
-class Movie: # pylint: disable=too-few-public-methods
+class Movie:  # pylint: disable=too-few-public-methods
     rating = Rating()
     director = Director()
     cast = Actors()

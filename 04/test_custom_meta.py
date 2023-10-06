@@ -67,8 +67,12 @@ class TestCustomMetaclass(unittest.TestCase):
     def test_adding_inst_attributes(self):
         inst = CustomClass(1, a=20, b="thirty")
 
-        inst.new_attr = "added" # pylint: disable=attribute-defined-outside-init
-        inst.new_method = lambda x: x # pylint: disable=attribute-defined-outside-init
+        inst.new_attr = (  # pylint: disable=attribute-defined-outside-init
+            "added"
+        )
+        inst.new_method = (  # pylint: disable=attribute-defined-outside-init
+            lambda x: x
+        )
 
         with self.assertRaises(AttributeError):
             print(inst.new_attr)
@@ -79,7 +83,9 @@ class TestCustomMetaclass(unittest.TestCase):
         self.assertTrue(inst.custom_new_attr == "added")
         self.assertTrue(inst.custom_new_method(1) == 1)
 
-        inst.__some_magic_method__ = lambda x: x # pylint: disable=attribute-defined-outside-init
+        inst.__some_magic_method__ = (  # pylint: disable=W0201
+            lambda x: x
+        )
 
         with self.assertRaises(AttributeError):
             print(inst.custom___some_magic_method__(1))

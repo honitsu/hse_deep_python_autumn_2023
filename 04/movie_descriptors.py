@@ -18,7 +18,7 @@ class Rating:
         instance.__dict__[self.name] = round(float(value), 1)
 
 
-class Director: # pylint: disable=too-few-public-methods
+class Director:  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.name = ""
 

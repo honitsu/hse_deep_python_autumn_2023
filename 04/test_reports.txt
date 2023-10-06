@@ -1,8 +1,5 @@
-[egor@vzpn 04]$ black *.py
-All done! ✨ 🍰 ✨
-4 files left unchanged.
-[egor@vzpn 04]$ flake8 *.py
-[egor@vzpn 04]$ pylint *.py
+[egor@vzpn 04]$ flake8 *
+[egor@vzpn 04]$ pylint *py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
