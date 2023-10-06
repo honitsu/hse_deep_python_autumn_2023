@@ -8,9 +8,6 @@ class CustomClass(metaclass=CustomMeta):
     def __init__(self, val, **kwargs):
         self.instance_attr = val
         self.__dict__.update(kwargs)
-        self.new_attr = None
-        self.new_method = None
-        self.__some_magic_method__ = None
 
     @staticmethod
     def solve():
@@ -20,6 +17,7 @@ class CustomClass(metaclass=CustomMeta):
         return "Custom by metaclass"
 
 
+# pylint: disable=E1101
 class TestCustomMetaclass(unittest.TestCase):
     def test_cls_attributes(self):
         with self.assertRaises(AttributeError):
@@ -69,8 +67,8 @@ class TestCustomMetaclass(unittest.TestCase):
     def test_adding_inst_attributes(self):
         inst = CustomClass(1, a=20, b="thirty")
 
-        inst.new_attr = "added"
-        inst.new_method = lambda x: x
+        inst.new_attr = "added" # pylint: disable=attribute-defined-outside-init
+        inst.new_method = lambda x: x # pylint: disable=attribute-defined-outside-init
 
         with self.assertRaises(AttributeError):
             print(inst.new_attr)
@@ -81,7 +79,7 @@ class TestCustomMetaclass(unittest.TestCase):
         self.assertTrue(inst.custom_new_attr == "added")
         self.assertTrue(inst.custom_new_method(1) == 1)
 
-        inst.__some_magic_method__ = lambda x: x
+        inst.__some_magic_method__ = lambda x: x # pylint: disable=attribute-defined-outside-init
 
         with self.assertRaises(AttributeError):
             print(inst.custom___some_magic_method__(1))
