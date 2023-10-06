@@ -1,5 +1,8 @@
-[egor@vzpn 04]$ flake8 *
-[egor@vzpn 04]$ pylint *py
+[egor@vzpn 04]$ black *.py
+All done! ✨ 🍰 ✨
+4 files left unchanged.
+[egor@vzpn 04]$ flake8 *.py
+[egor@vzpn 04]$ pylint *.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
@@ -7,7 +10,7 @@ Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 [egor@vzpn 04]$ coverage run test_custom_meta.py
 ....
 ----------------------------------------------------------------------
-Ran 4 tests in 0.002s
+Ran 4 tests in 0.003s
 
 OK
 [egor@vzpn 04]$ coverage report -m
@@ -20,7 +23,7 @@ TOTAL                    78      0   100%
 [egor@vzpn 04]$ coverage run test_movie_descriptors.py
 ...
 ----------------------------------------------------------------------
-Ran 3 tests in 0.002s
+Ran 3 tests in 0.003s
 
 OK
 [egor@vzpn 04]$ coverage report -m
