@@ -1,24 +1,24 @@
-[egor@vzpn 02]$ black *py
+[egor@vzpn 02]$ black json_parser.py test_json_parser.py
 All done! ✨ 🍰 ✨
 2 files left unchanged.
-[egor@vzpn 02]$ flake8 *py
-[egor@vzpn 02]$ pylint *py
+[egor@vzpn 02]$ flake8 json_parser.py test_json_parser.py
+[egor@vzpn 02]$ pylint json_parser.py test_json_parser.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
 [egor@vzpn 02]$ coverage run test_json_parser.py
 key1: word1
-.........
+...........
 ----------------------------------------------------------------------
-Ran 9 tests in 0.263s
+Ran 11 tests in 0.343s
 
 OK
-[egor@vzpn 02]$ coverage report -m *py
+[egor@vzpn 02]$ coverage report -m json_parser.py test_json_parser.py
 Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
 json_parser.py           21      0   100%
-test_json_parser.py      62      0   100%
+test_json_parser.py      82      0   100%
 ---------------------------------------------------
-TOTAL                    83      0   100%
+TOTAL                   103      0   100%
 [egor@vzpn 02]$

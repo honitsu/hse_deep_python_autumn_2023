@@ -130,6 +130,78 @@ class TestJsonParser(unittest.TestCase):
     def test_callback(self):
         self.assertFalse(callback("key1", "word1"))
 
+    @patch("json_parser.callback")
+    def test_missing_keyword(self, callback_mock: MagicMock):
+        fake = Faker(locale="RU_ru")
+        data = {
+            "поле_1": fake.sentence(),
+            "поле_2": fake.sentence(),
+            "поле_3": fake.sentence(),
+        }
+
+        json_data_str = json.dumps(data)
+
+        self.assertFalse(
+            parse_json(
+                json_data_str,
+                required_fields=["поле_1", "поле_2"],
+                keywords=["missing_keyword"],
+                keyword_callback=callback_mock,
+            )
+        )
+
+        callback_mock.assert_not_called()
+
+        parse_json(
+            json_data_str,
+            required_fields=["поле_1", "поле_2", "поле_3"],
+            keywords=["missing_keyword"],
+            keyword_callback=callback_mock,
+        )
+
+        callback_mock.assert_not_called()
+
+    @patch("json_parser.callback")
+    def test_multiple_keywords_in_one_line(self, callback_mock: MagicMock):
+        json_data = {
+            "key1": "Word1 word2 word3",
+            "key2": "word2 word3 word4",
+        }
+
+        json_data_str = json.dumps(json_data)
+
+        self.assertFalse(
+            parse_json(
+                json_data_str,
+                required_fields=["key1"],
+                keywords=["word2", "word3"],
+                keyword_callback=callback_mock,
+            )
+        )
+
+        expected_calls = [
+            unittest.mock.call("key1", "word2"),
+            unittest.mock.call("key1", "word3"),
+        ]
+        self.assertEqual(expected_calls, callback_mock.call_args_list)
+
+        callback_mock.reset_mock()
+
+        self.assertFalse(
+            parse_json(
+                json_data_str,
+                required_fields=["key2"],
+                keywords=["word3", "word4"],
+                keyword_callback=callback_mock,
+            )
+        )
+
+        expected_calls = [
+            unittest.mock.call("key2", "word3"),
+            unittest.mock.call("key2", "word4"),
+        ]
+        self.assertEqual(expected_calls, callback_mock.call_args_list)
+
 
 def main():
     unittest.main()
