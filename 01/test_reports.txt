@@ -1,0 +1,36 @@
+[egor@mail 01]$ black some_model.py test_some_model.py file_generator.py test_file_generator.py
+All done! ✨ 🍰 ✨
+4 files left unchanged.
+[egor@mail 01]$ flake8 --ignore=E501 some_model.py test_some_model.py file_generator.py test_file_generator.py
+[egor@mail 01]$ pylint some_model.py test_some_model.py file_generator.py test_file_generator.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+[egor@mail 01]$ coverage run test_some_model.py
+..................
+----------------------------------------------------------------------
+Ran 18 tests in 0.015s
+
+OK
+[egor@mail 01]$ coverage report -m
+Name                 Stmts   Miss  Cover   Missing
+--------------------------------------------------
+some_model.py           13      0   100%
+test_some_model.py      87      0   100%
+--------------------------------------------------
+TOTAL                  100      0   100%
+[egor@mail 01]$ coverage run test_file_generator.py
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.007s
+
+OK
+[egor@mail 01]$ coverage report -m
+Name                     Stmts   Miss  Cover   Missing
+------------------------------------------------------
+file_generator.py           13      0   100%
+test_file_generator.py      57      0   100%
+------------------------------------------------------
+TOTAL                       70      0   100%
+[egor@mail 01]$

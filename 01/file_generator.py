@@ -10,13 +10,14 @@ def filter_lines(
     words = [word.lower() for word in words_list]
     if isinstance(file_input, str):
         # Используем контекстный менеджер для открытия файла
-        with open(file_input, "r", encoding=encoding_type) as file:
-            for line in file:
-                line_words = set(line.lower().split())
-                if line_words.intersection(words):
-                    yield line.strip()
+        file = open(  # pylint: disable=consider-using-with
+            file_input, "r", encoding=encoding_type
+        )
     else:
-        for line in file_input:
-            line_words = set(line.lower().split())
-            if line_words.intersection(words):
-                yield line.strip()
+        file = file_input
+    for line in file:
+        line_words = set(line.lower().split())
+        if line_words.intersection(words):
+            yield line.strip()
+    if isinstance(file_input, str):
+        file.close()

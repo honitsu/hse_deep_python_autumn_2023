@@ -10,8 +10,7 @@ class TestFilterLines(unittest.TestCase):
     def setUpClass(cls) -> None:
         with open(TESTFILENAME, "w", encoding="utf-8") as file:
             file.write(
-                "Hello there\nThis is a default phrase\n"
-                "For testing the file\n"
+                "Hello there\nThis is a default phrase\n" "For testing the file\n"
             )
 
     # @classmethod
