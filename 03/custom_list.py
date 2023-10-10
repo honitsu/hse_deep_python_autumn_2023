@@ -1,114 +1,59 @@
-from collections import UserList
-from itertools import zip_longest
+class CustomList(list):
+    def __str__(self):
+        return super.__str__(self) + " " + str(sum(self))
 
+    @staticmethod
+    def same_size(list1, list2):
+        while len(list1) > len(list2):
+            list2.append(0)
+        while len(list1) < len(list2):
+            list1.append(0)
+        return list1, list2
 
-class CustomList(UserList):
-    def __add__(self, other):
-        if isinstance(other, CustomList):
-            other = other.data
-        elif not isinstance(other, list):
-            raise TypeError(
-                f"Can not add element of type {type(other)} with CustomList"
-            )
+    def __add__(self, other: list):
+        copy, other = CustomList.same_size(self.copy(), other.copy())
+        for i, num in enumerate(other):
+            copy[i] += num
+        return CustomList(copy)
 
-        if not other:
-            return CustomList(self.data.copy())
-        result = []
-        for elem_x, elem_y in zip_longest(self.data, other, fillvalue=0):
-            result.append(elem_x + elem_y)
-        return CustomList(result)
+    def __sub__(self, other: list):
+        copy, other = CustomList.same_size(self.copy(), other.copy())
+        for i, num in enumerate(other):
+            copy[i] -= num
+        return CustomList(copy)
 
-    def __radd__(self, other):
-        try:
-            return self + other
-        except TypeError as err:
-            raise TypeError(
-                "Can not add element of "
-                "CustomList with element of "
-                f" {type(other)}"
-            ) from err
+    def __radd__(self, other: list):
+        copy, other = CustomList.same_size(self.copy(), other.copy())
+        for i, num in enumerate(other):
+            copy[i] += num
+        return CustomList(copy)
 
-    def __sub__(self, other):
-        if isinstance(other, CustomList):
-            other = other.data
-        elif not isinstance(other, list):
-            raise TypeError(
-                f"""Can not subtract element of type
-                {type(other)} from CustomList"""
-            )
+    def __iadd__(self, other: list):
+        return self.__add__(other)
 
-        if not other:
-            return CustomList(self.data.copy())
-        result = []
-        for elem_x, elem_y in zip_longest(self.data, other, fillvalue=0):
-            result.append(elem_x - elem_y)
-        return CustomList(result)
+    def __rsub__(self, other: list):
+        copy, other = CustomList.same_size(self.copy(), other.copy())
+        for i, num in enumerate(copy):
+            other[i] -= num
+        return CustomList(other)
 
-    def __rsub__(self, other):
-        if not isinstance(other, list):
-            raise TypeError(
-                "Can not subtract element of "
-                "CustomList from element of "
-                f"type {type(other)}"
-            )
-        if not other:
-            return CustomList([-elem_x for elem_x in self.data])
-        result = []
-        for elem_x, elem_y in zip_longest(other, self.data, fillvalue=0):
-            result.append(elem_x - elem_y)
-        return CustomList(result)
+    def __isub__(self, other: list):
+        return self.__sub__(other)
 
     def __lt__(self, other):
-        if issubclass(type(other), CustomList):
-            return sum(self.data) < sum(other.data)
-        raise TypeError(
-            "'<' not supported between instances of "
-            f"{type(self)} and {type(other)}"
-        )
+        return sum(self) < sum(other)
 
     def __le__(self, other):
-        if issubclass(type(other), CustomList):
-            return sum(self.data) <= sum(other.data)
-        raise TypeError(
-            "'<=' not supported between instances of "
-            f"{type(self)} and {type(other)}"
-        )
+        return sum(self) <= sum(other)
 
     def __eq__(self, other):
-        if issubclass(type(other), CustomList):
-            return sum(self.data) == sum(other.data)
-        raise TypeError(
-            "'==' not supported between instances of "
-            f"{self.__class__.__name__} and "
-            f"{other.__class__.__name__}"
-        )
+        return sum(self) == sum(other)
 
     def __ne__(self, other):
-        if issubclass(type(other), CustomList):
-            return sum(self.data) != sum(other.data)
-        raise TypeError(
-            "'!=' not supported between instances of "
-            f"{type(self)} and {type(other)}"
-        )
+        return sum(self) != sum(other)
 
     def __gt__(self, other):
-        if issubclass(type(other), CustomList):
-            return sum(self.data) > sum(other.data)
-        raise TypeError(
-            "'>' not supported between instances of "
-            f"{type(self)} and {type(other)}"
-        )
+        return sum(self) > sum(other)
 
     def __ge__(self, other):
-        if issubclass(type(other), CustomList):
-            return sum(self.data) >= sum(other.data)
-        raise TypeError(
-            "'>=' not supported between instances of "
-            f"{type(self)} and {type(other)}"
-        )
-
-    def __str__(self):
-        return f"CustomList({self.data}, sum = {sum(self.data)})"
-
-    def __repr__(self):
-        return f"CustomList({self.data})"
+        return sum(self) >= sum(other)

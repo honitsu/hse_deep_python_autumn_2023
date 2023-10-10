@@ -1,229 +1,154 @@
-import random
-from itertools import zip_longest
 import unittest
-
 from custom_list import CustomList
 
 
 class TestCustomList(unittest.TestCase):
-    def setUp(self) -> None:
-        self.int_lst_1 = CustomList(
-            [random.randint(0, 100) for _ in range(10)]
-        )
-        self.int_lst_2 = CustomList(
-            [random.randint(0, 100) for _ in range(10)]
-        )
+    def setUp(self):
+        self.cl1 = CustomList([5, 1, 3, 7])
+        self.cl2 = CustomList([1, 2, 7])
+        self.cl3 = CustomList([4, 4, 4, 4])
+        self.cl4 = CustomList()
+        self.list1 = [2, 2]
 
-        self.float_lst_1 = CustomList([random.random() for _ in range(10)])
-        self.float_lst_2 = CustomList([random.random() for _ in range(10)])
+    def compare(self, list1, list2):
+        self.assertEqual(len(list1), len(list2))
+        for num1, num2 in zip(list1, list2):
+            self.assertEqual(num1, num2)
 
-    def test_addition(self):
-        expected_result = [
-            x_val + y_val
-            for x_val, y_val in zip_longest(
-                self.float_lst_1.data,
-                self.float_lst_2.data,
-            )
-        ]
-        self.assertEqual(
-            (self.float_lst_1 + self.float_lst_2).data, expected_result
-        )
+    def test__str__(self):
+        self.assertEqual(self.cl4.__str__(), "[] 0")
+        self.assertEqual(self.cl1.__str__(), "[5, 1, 3, 7] 16")
 
-        expected_result = [
-            x_val + y_val
-            for x_val, y_val in zip_longest(
-                self.int_lst_1.data,
-                self.int_lst_2.data,
-            )
-        ]
-        self.assertEqual(
-            (self.int_lst_1 + self.int_lst_2).data, expected_result
-        )
+    def test_same_size(self):
+        cl1, cl2 = CustomList.same_size([1, 2], [1, 2, 3, 4])
+        self.compare(cl1, [1, 2, 0, 0])
+        self.compare(cl2, [1, 2, 3, 4])
 
-        self.assertEqual(
-            (self.int_lst_1 + CustomList()).data, self.int_lst_1.data
-        )
+        cl1, cl2 = CustomList.same_size([], [1, 2])
+        self.compare(cl1, [0, 0])
+        self.compare(cl2, [1, 2])
 
-        self.assertEqual((CustomList([1]) + CustomList([2, 5])).data, [3, 5])
-        self.assertEqual((CustomList([1]) + [2, 5]).data, [3, 5])
-        self.assertEqual((CustomList([1]) + []).data, [1])
+        cl1, cl2 = CustomList.same_size([1, 2], [3, 4])
+        self.compare(cl1, [1, 2])
+        self.compare(cl2, [3, 4])
 
-    def test_right_addition(self):
-        self.assertEqual(([] + self.int_lst_1).data, self.int_lst_1.data)
+    def test__add__(self):
 
-        self.assertEqual(([2, 5] + CustomList([1, 3])).data, [3, 8])
+        self.compare(self.cl1 + self.cl2, CustomList([6, 3, 10, 7]))
+        self.compare(self.cl2 + self.cl1, CustomList([6, 3, 10, 7]))
+        self.compare(self.cl2 + CustomList(self.list1), CustomList([3, 4, 7]))
+        self.compare(self.cl1 + self.list1, CustomList([7, 3, 3, 7]))
+        self.compare(self.cl2 + self.list1, CustomList([3, 4, 7]))
 
-        self.assertEqual(([2] + CustomList([1])).data, [3])
+        self.assertIsInstance(self.cl1 + self.cl2, CustomList)
+        self.assertIsInstance(self.cl1 + self.list1, CustomList)
 
-        self.assertEqual(([2, 3, 7] + CustomList([1])).data, [3, 3, 7])
+        self.compare(self.cl1, CustomList([5, 1, 3, 7]))
+        self.compare(self.cl2, CustomList([1, 2, 7]))
+        self.compare(self.list1, [2, 2])
 
-    def test_basic_addition(self):
-        with self.assertRaises(TypeError):
-            _ = self.int_lst_1 + 1
+    def test__radd__(self):
 
-        with self.assertRaises(TypeError):
-            _ = None + self.int_lst_1
+        self.compare(self.list1 + self.cl1, CustomList([7, 3, 3, 7]))
+        self.compare(self.list1 + self.cl2, CustomList([3, 4, 7]))
 
-        with self.assertRaises(TypeError):
-            _ = self.int_lst_1 + "string"
+        self.assertIsInstance(self.list1 + self.cl1, CustomList)
+        self.assertIsInstance(self.list1 + self.cl2, CustomList)
 
-        some_custom_list = CustomList()
-        self.assertFalse(
-            some_custom_list is (some_custom_list + self.int_lst_1)
-        )
-        self.assertFalse(
-            some_custom_list is (self.int_lst_1 + some_custom_list)
-        )
-        self.assertFalse(some_custom_list is ([] + some_custom_list))
-        self.assertFalse(some_custom_list is (some_custom_list + []))
-        self.assertFalse(some_custom_list is ([1, 2, 4] + some_custom_list))
-        self.assertFalse(some_custom_list is (some_custom_list + [3, 4, 5]))
+        self.compare(self.cl1, CustomList([5, 1, 3, 7]))
+        self.compare(self.cl2, CustomList([1, 2, 7]))
+        self.compare(self.list1, [2, 2])
 
-    def test_subtraction(self):
-        expected_result = [
-            x_val - y_val
-            for x_val, y_val in zip_longest(
-                self.float_lst_1.data,
-                self.float_lst_2.data,
-            )
-        ]
-        self.assertEqual(
-            (self.float_lst_1 - self.float_lst_2).data, expected_result
-        )
+    def test__sub__(self):
 
-        expected_result = [
-            x_val - y_val
-            for x_val, y_val in zip_longest(
-                self.int_lst_1.data,
-                self.int_lst_2.data,
-            )
-        ]
-        self.assertEqual(
-            (self.int_lst_1 - self.int_lst_2).data, expected_result
-        )
+        self.compare(self.cl1 - self.cl2, CustomList([4, -1, -4, 7]))
+        self.compare(self.cl2 - self.cl1, CustomList([-4, 1, 4, -7]))
+        self.compare(self.cl2 - CustomList(self.list1), CustomList([-1, 0, 7]))
+        self.compare(self.cl1 - self.list1, CustomList([3, -1, 3, 7]))
+        self.compare(self.cl2 - self.list1, CustomList([-1, 0, 7]))
+        self.compare(CustomList() - self.list1, CustomList([-2, -2]))
 
-        some_custom_list = CustomList([1, 2, 3])
-        self.assertEqual((some_custom_list - CustomList([2])).data, [-1, 2, 3])
-        self.assertEqual(
-            (some_custom_list - CustomList([2, 5, 4, 7])).data,
-            [-1, -3, -1, -7],
-        )
-        self.assertEqual((some_custom_list - [2]).data, [-1, 2, 3])
-        self.assertEqual(
-            (some_custom_list - [2, 5, 4, 7]).data, [-1, -3, -1, -7]
-        )
+        self.assertIsInstance(self.cl1 - self.cl2, CustomList)
+        self.assertIsInstance(CustomList() - self.list1, CustomList)
 
-        self.assertEqual((self.int_lst_1 - []).data, self.int_lst_1.data)
+        self.compare(self.cl1, CustomList([5, 1, 3, 7]))
+        self.compare(self.cl2, CustomList([1, 2, 7]))
+        self.compare(self.list1, [2, 2])
 
-        self.assertEqual(
-            (self.int_lst_1 - CustomList()).data, self.int_lst_1.data
-        )
+    def test__rsub__(self):
+        self.compare(self.list1 - self.cl1, CustomList([-3, 1, -3, -7]))
+        self.compare(self.list1 - self.cl2, CustomList([1, 0, -7]))
 
-    def test_right_subtraction(self):
-        lst = list(range(10))
-        expected_result = [
-            x_val - y_val
-            for x_val, y_val in zip_longest(
-                lst,
-                self.int_lst_2.data,
-            )
-        ]
+        self.assertIsInstance(self.list1 - self.cl1, CustomList)
+        self.assertIsInstance(self.list1 - self.cl2, CustomList)
 
-        self.assertEqual((lst - self.int_lst_2).data, expected_result)
+        self.compare(self.cl1, CustomList([5, 1, 3, 7]))
+        self.compare(self.cl2, CustomList([1, 2, 7]))
+        self.compare(self.list1, [2, 2])
 
-        some_custom_list = CustomList([1, 2, 3])
-        self.assertEqual(([1] - some_custom_list).data, [0, -2, -3])
-        self.assertEqual(([3, 2] - some_custom_list).data, [2, 0, -3])
-        self.assertEqual(([5, 3, 2, 7] - some_custom_list).data, [4, 1, -1, 7])
+    def test__iadd__(self):
+        self.cl1 += self.cl2
+        self.compare(self.cl1, CustomList([6, 3, 10, 7]))
+        self.cl2 += CustomList(self.list1)
+        self.compare(self.cl2, CustomList([3, 4, 7]))
+        self.cl2 += self.list1
+        self.compare(self.cl2, CustomList([5, 6, 7]))
 
-        expected_result = [-x_val for x_val in self.int_lst_2.data]
-        self.assertEqual(([] - self.int_lst_2).data, expected_result)
-        with self.assertRaises(TypeError):
-            _ = None - self.int_lst_1
+        self.assertIsInstance(self.cl2, CustomList)
 
-    def test_basic_subtraction(self):
-        with self.assertRaises(TypeError):
-            _ = self.int_lst_1 - 1
+    def test__isub__(self):
+        self.cl1 -= self.cl2
+        self.compare(self.cl1, CustomList([4, -1, -4, 7]))
+        self.cl2 -= CustomList(self.list1)
+        self.compare(self.cl2, CustomList([-1, 0, 7]))
+        self.cl2 -= self.list1
+        self.compare(self.cl2, CustomList([-3, -2, 7]))
 
-        some_custom_list = CustomList()
-        self.assertFalse(
-            some_custom_list is (some_custom_list - self.int_lst_1)
-        )
-        self.assertFalse(
-            some_custom_list is (self.int_lst_1 - some_custom_list)
-        )
-        self.assertFalse(some_custom_list is (some_custom_list - []))
-        self.assertFalse(some_custom_list is (some_custom_list - [3, 4, 5]))
+        self.assertIsInstance(self.cl2, CustomList)
 
-        with self.assertRaises(TypeError):
-            _ = self.int_lst_1 - 1
+    def test__lt__(self):
+        self.cl2.append(4)
 
-    def test_equal(self):
-        list1 = CustomList([1, 2, 3])  # 6
-        list2 = CustomList([4, 5, 6])  # 15
-        list3 = CustomList([7, -1])  # 6
-        list4 = CustomList([4, 2, 0])  # 6
-        self.assertEqual(list1, list3)
-        self.assertEqual(list1, list4)
-        self.assertNotEqual(list1, list2)
+        self.assertFalse(self.cl1 < self.cl2)
+        self.assertFalse(self.cl3 < self.cl1)
+        self.assertFalse(self.cl1 < self.cl4)
 
-    def test_greater_than(self):
-        list1 = CustomList([1, 2, 3])  # 6
-        list2 = CustomList([4, 5, 6])  # 15
-        list3 = CustomList([15])  # 15
-        self.assertGreater(list2, list1)
-        self.assertGreater(list3, list1)
-        self.assertGreaterEqual(list2, list1)
-        self.assertGreaterEqual(list2, list3)
+    def test__le__(self):
+        self.cl2.append(4)
 
-    def test_less_than(self):
-        list1 = CustomList([1, 2, 3])  # 6
-        list2 = CustomList([4, 5, 6])  # 15
-        list3 = CustomList([15])  # 15
-        self.assertLess(list1, list2)
-        self.assertLess(list1, list3)
-        self.assertLessEqual(list1, list2)
-        self.assertLessEqual(list2, list3)
+        self.assertFalse(self.cl1 <= self.cl2)
+        self.assertTrue(self.cl3 <= self.cl1)
+        self.assertFalse(self.cl1 <= self.cl4)
 
-    def test_invalid_operators(self):
-        a_lst = CustomList([10])
-        with self.assertRaises(TypeError):
-            _ = a_lst == 10
+    def test__eq__(self):
+        self.cl2.append(4)
 
-        with self.assertRaises(TypeError):
-            _ = a_lst != 10
+        self.assertFalse(self.cl1 == self.cl2)
+        self.assertTrue(self.cl3 == self.cl1)
+        self.assertTrue(self.cl4 == CustomList())
 
-        with self.assertRaises(TypeError):
-            _ = a_lst <= 10
+    def test__ne__(self):
+        self.cl2.append(4)
 
-        with self.assertRaises(TypeError):
-            _ = a_lst >= 10
+        self.assertTrue(self.cl1 != self.cl2)
+        self.assertFalse(self.cl3 != self.cl1)
+        self.assertTrue(self.cl4 != self.cl2)
 
-        with self.assertRaises(TypeError):
-            _ = a_lst > 10
+    def test__gt__(self):
+        self.cl2.append(4)
 
-        with self.assertRaises(TypeError):
-            _ = a_lst < 10
+        self.assertTrue(self.cl1 > self.cl2)
+        self.assertFalse(self.cl3 > self.cl1)
+        self.assertTrue(self.cl1 > self.cl4)
+        self.assertTrue(self.cl2 > self.cl4)
 
-    def test_print(self):
-        custom_list = CustomList([5, 1, 3, 7])
-        self.assertTrue(
-            f"{custom_list}" == "CustomList([5, 1, 3, 7], sum = 16)"
-        )
+    def test__ge__(self):
+        self.cl2.append(4)
 
-    def test_str(self):
-        self.assertEqual(
-            str(CustomList([5, 1, 3, 7])), "CustomList([5, 1, 3, 7], sum = 16)"
-        )
-
-        self.assertEqual(str(CustomList([])), "CustomList([], sum = 0)")
-
-    def test_repr(self):
-        self.assertEqual(
-            repr(CustomList([5, 1, 3, 7])), "CustomList([5, 1, 3, 7])"
-        )
-
-        self.assertEqual(repr(CustomList([])), "CustomList([])")
+        self.assertTrue(self.cl1 >= self.cl2)
+        self.assertTrue(self.cl3 >= self.cl1)
+        self.assertTrue(self.cl1 >= self.cl4)
+        self.assertTrue(self.cl2 >= self.cl4)
 
 
 def main():

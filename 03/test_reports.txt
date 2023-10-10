@@ -1,31 +1,23 @@
-[egor@vzpn 03]$ black custom_list.py ; black test_custom_list.py
+[egor@mail 03]$ black custom_list.py test_custom_list.py
 All done! ✨ 🍰 ✨
-1 file left unchanged.
-reformatted test_custom_list.py
-
-All done! ✨ 🍰 ✨
-1 file reformatted.
-[egor@vzpn 03]$ flake8 custom_list.py ; flake8 test_custom_list.py
-[egor@vzpn 03]$ pylint custom_list.py ; pylint test_custom_list.py
+2 files left unchanged.
+[egor@mail 03]$ flake8 custom_list.py test_custom_list.py
+[egor@mail 03]$ pylint custom_list.py test_custom_list.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-
---------------------------------------------------------------------
-Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
-
-[egor@vzpn 03]$ coverage run test_custom_list.py
-.............
+[egor@mail 03]$ coverage run test_custom_list.py
+..............
 ----------------------------------------------------------------------
-Ran 13 tests in 0.007s
+Ran 14 tests in 0.005s
 
 OK
-[egor@vzpn 03]$ coverage report -m
+[egor@mail 03]$ coverage report -m
 Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
-custom_list.py           67      0   100%
-test_custom_list.py     123      0   100%
+custom_list.py           45      0   100%
+test_custom_list.py     117      0   100%
 ---------------------------------------------------
-TOTAL                   190      0   100%
-[egor@vzpn 03]$
+TOTAL                   162      0   100%
+[egor@mail 03]$
