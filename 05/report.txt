@@ -1,0 +1,25 @@
+[egor@mail 05]$ black *py
+reformatted lru_cache.py
+
+All done! ✨ 🍰 ✨
+1 file reformatted, 1 file left unchanged.
+[egor@mail 05]$ flake8 *.py
+[egor@mail 05]$ pylint test_lru_cache.py lru_cache.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+[egor@mail 05]$ coverage run test_lru_cache.py
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.001s
+
+OK
+[egor@mail 05]$ coverage report -m
+Name                Stmts   Miss  Cover   Missing
+-------------------------------------------------
+lru_cache.py           41      0   100%
+test_lru_cache.py      64      0   100%
+-------------------------------------------------
+TOTAL                 105      0   100%
+[egor@mail 05]$
