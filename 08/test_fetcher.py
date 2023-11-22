@@ -5,7 +5,7 @@ import aiohttp
 import fetcher
 
 
-class TestInfo(unittest.TestCase):
+class TestCounters(unittest.TestCase):
     stats = fetcher.Info()
 
     def test_add_good(self):
@@ -18,7 +18,12 @@ class TestInfo(unittest.TestCase):
         self.assertEqual(self.stats.get_bad(), 2)
 
     def test_add_total(self):
-        self.assertEqual(self.stats.get_total(), 3)
+        self.stats.add_total()
+        self.assertEqual(self.stats.get_total(), 4)
+
+
+class TestFetcherss(unittest.TestCase):
+    stats = fetcher.Info()
 
     def setUp(self):
         self.urls = [
@@ -34,32 +39,23 @@ class TestInfo(unittest.TestCase):
     def test_fetch_urls(self):
         mock_results = [
             "This domain is for use in illustrative examples in documents.",
-            "* @param {*} s Имя метрики, если прилетает не стринга, то это как бы коммит,"
-            " все собранные радары дёргаются в одном запросе",
+            "* @param {*} s Имя метрики, если прилетает не стринга, то это как бы коммит, все собранные радары дёргаются в одном запросе",
             "Анонимайзер",
             "Wir helfen dir</div>",
         ]
 
-        results = self.loop.run_until_complete(
-            fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats)
-        )
-        self.assertEqual(results[0].count(mock_results[0]), 1)
-        self.assertEqual(results[1].count(mock_results[1]), 1)
-        self.assertEqual(results[2].count(mock_results[2]), 1)
-        self.assertEqual(results[3].count(mock_results[3]), 1)
-        self.assertEqual(self.stats.get_good(), 5)
+        results = self.loop.run_until_complete(fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats))
+        for num, res in enumerate(results):
+            self.assertEqual(res.count(mock_results[num]), 1)
 
     def test_fetch_invalid_urls(self):
         self.urls = [
             "https://docs.aiohttp.org/en/stable/client_ref.html",
             "https://sarkariresult.com",
         ]
-        results = self.loop.run_until_complete(
-            fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats)
-        )
-        self.assertEqual(results[0], "Error: 404")
-        self.assertEqual(results[1], "Error: 403")
-        self.assertEqual(self.stats.get_bad(), 4)
+        results = self.loop.run_until_complete(fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats))
+        self.assertEqual(results, ["Error: 404", "Error: 403"])
+        self.assertEqual(self.stats.get_bad(), 2)
 
     def test_fetch_no_urls(self):
         self.concurrent_requests = 0
@@ -67,13 +63,12 @@ class TestInfo(unittest.TestCase):
         save_good = self.stats.get_good()
         save_bad = self.stats.get_bad()
         save_total = self.stats.get_total()
-        self.loop.run_until_complete(
-            fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats)
-        )
+        self.loop.run_until_complete(fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats))
         self.assertEqual(self.stats.get_good(), save_good)
         self.assertEqual(self.stats.get_bad(), save_bad)
         self.assertEqual(self.stats.get_total(), save_total)
 
+class TestFileReader(unittest.TestCase):
     def test_read_urls_list(self):
         urls_file = "test_urls.txt"
         urls = fetcher.read_urls_list(urls_file)

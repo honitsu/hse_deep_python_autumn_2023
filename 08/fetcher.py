@@ -1,11 +1,10 @@
 import asyncio
 import argparse
-
-# from pathlib import Path
+from pathlib import Path
 import aiohttp
 
 
-# DIR = "./www"
+DIR = "./www"
 
 
 class Info:
@@ -62,9 +61,7 @@ async def fetch_urls(urls, concurrent_requests, stats):
         for url in urls:
             # Use semaphore to limit the concurrent requests
             async with semaphore:
-                tasks.append(
-                    asyncio.ensure_future(fetch_url(session, url, stats))
-                )
+                tasks.append(asyncio.ensure_future(fetch_url(session, url, stats)))
 
         return await asyncio.gather(*tasks)
 
@@ -75,7 +72,6 @@ def read_urls_list(urls_file):
     return urls
 
 
-"""
 def save_results(save_dir, urls, results):
     Path(save_dir).mkdir(parents=True, exist_ok=True)
     for url, result in zip(urls, results):
@@ -90,32 +86,22 @@ def save_results(save_dir, urls, results):
         urlc = f"{save_dir}/{urlc}.html"
         with open(urlc, "w", encoding="utf-8") as file:
             file.write(f"URL: {url}\nResponse: {result}\n\n")
-"""  # pylint: disable=pointless-string-statement
 
 
 def get_data(urls, concurrent_requests, stats):
     loop = asyncio.get_event_loop()
-    return loop.run_until_complete(
-        fetch_urls(urls, concurrent_requests, stats)
-    )
+    return loop.run_until_complete(fetch_urls(urls, concurrent_requests, stats))
 
 
 def main():
     parser = argparse.ArgumentParser(description="Asynchronous URL fetcher")
-    parser.add_argument(
-        "concurrent_requests", type=int, help="number of concurrent requests"
-    )
-    parser.add_argument(
-        "urls_file", type=str, help="file containing list of URLs"
-    )
+    parser.add_argument("concurrent_requests", type=int, help="number of concurrent requests")
+    parser.add_argument("urls_file", type=str, help="file containing list of URLs")
 
     args = parser.parse_args()
     concurrent_requests = args.concurrent_requests
     if concurrent_requests < 1:
-        print(
-            f"Invalid number of concurrent requests: {concurrent_requests}."
-            " Should be positive integer."
-        )
+        print(f"Invalid number of concurrent requests: {concurrent_requests}." " Should be positive integer.")
         return
     urls_file = args.urls_file
 
@@ -123,9 +109,7 @@ def main():
     urls = read_urls_list(urls_file)
     get_data(urls, concurrent_requests, stats)
     # save_results(DIR, urls, results)
-    print(
-        f"Good: {stats.get_good()}\nBad: {stats.get_bad()}\nTotal: {stats.get_total()}\n"
-    )
+    print(f"Good: {stats.get_good()}\nBad: {stats.get_bad()}\nTotal: {stats.get_total()}\n")
 
 
 if __name__ == "__main__":
