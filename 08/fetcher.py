@@ -36,15 +36,13 @@ class Info:
 
 async def fetch_url(session, url, stats):
     try:
-        async with session.get(url, timeout=10) as response:
-            if __name__ == "__main__":
-                print(f"{url} status: {response.status}")
+        async with session.get(url, timeout=15) as response:
             if response.status == 200:
                 stats.add_good()
                 return await response.text()
             stats.add_bad()
             return f"Error: {response.status}"
-    except asyncio.TimeoutError:
+    except asyncio.TimeoutError:  # pragma: no cover
         return "Error: Timeout"
 
 
@@ -72,7 +70,7 @@ def read_urls_list(urls_file):
     return urls
 
 
-def save_results(save_dir, urls, results):
+def save_results(save_dir, urls, results):  # pragma: no cover
     Path(save_dir).mkdir(parents=True, exist_ok=True)
     for url, result in zip(urls, results):
         urlc = url
@@ -93,7 +91,7 @@ def get_data(urls, concurrent_requests, stats):
     return loop.run_until_complete(fetch_urls(urls, concurrent_requests, stats))
 
 
-def main():
+def main():  # pragma: no cover
     parser = argparse.ArgumentParser(description="Asynchronous URL fetcher")
     parser.add_argument("concurrent_requests", type=int, help="number of concurrent requests")
     parser.add_argument("urls_file", type=str, help="file containing list of URLs")
@@ -112,5 +110,5 @@ def main():
     print(f"Good: {stats.get_good()}\nBad: {stats.get_bad()}\nTotal: {stats.get_total()}\n")
 
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+#    main()

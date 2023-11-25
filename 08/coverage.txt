@@ -1,0 +1,18 @@
+[egor@vzpn 08]$ coverage run  --source=. -m pytest test_fetcher.py
+==================================================================== test session starts ====================================================================
+platform linux -- Python 3.6.8, pytest-7.0.1, pluggy-1.0.0
+rootdir: /home/egor/dev/08
+plugins: Faker-14.2.1, cov-4.0.0
+collected 8 items
+
+test_fetcher.py ........                                                                                                                              [100%]
+
+===================================================================== 8 passed in 3.75s =====================================================================
+[egor@vzpn 08]$ coverage report -m
+Name              Stmts   Miss  Cover   Missing
+-----------------------------------------------
+fetcher.py           51      0   100%
+test_fetcher.py      55      0   100%
+-----------------------------------------------
+TOTAL               106      0   100%
+[egor@vzpn 08]$

@@ -5,6 +5,23 @@ import aiohttp
 import fetcher
 
 
+class TestFileReader(unittest.TestCase):
+    def test_read_urls_list(self):
+        urls_file = "test_urls.txt"
+        urls = fetcher.read_urls_list(urls_file)
+        self.assertEqual(
+            urls,
+            [
+                "https://2ip.ru",
+                "https://amazon.de",
+                "https://example.com",
+                "https://github.com",
+                "https://google.com",
+                "http://test.co.jp"
+            ],
+        )
+
+
 class TestCounters(unittest.TestCase):
     stats = fetcher.Info()
 
@@ -21,6 +38,13 @@ class TestCounters(unittest.TestCase):
         self.stats.add_total()
         self.assertEqual(self.stats.get_total(), 4)
 
+class TestData(unittest.TestCase):
+    stats = fetcher.Info()
+
+    def test_get_data(self):
+        urls = fetcher.read_urls_list("test_urls.txt")
+        ret = fetcher.get_data(urls, 10, self.stats)
+        self.assertEqual(self.stats.get_good(), 6)
 
 class TestFetcherss(unittest.TestCase):
     stats = fetcher.Info()
@@ -68,21 +92,6 @@ class TestFetcherss(unittest.TestCase):
         self.assertEqual(self.stats.get_bad(), save_bad)
         self.assertEqual(self.stats.get_total(), save_total)
 
-class TestFileReader(unittest.TestCase):
-    def test_read_urls_list(self):
-        urls_file = "test_urls.txt"
-        urls = fetcher.read_urls_list(urls_file)
-        self.assertEqual(
-            urls,
-            [
-                "https://2ip.ru",
-                "https://amazon.de",
-                "https://example.com",
-                "https://github.com",
-                "https://google.com",
-            ],
-        )
 
-
-if __name__ == "__main__":
-    unittest.main()
+    # if __name__ == "__main__":
+    # unittest.main()
