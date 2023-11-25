@@ -1,19 +1,31 @@
+import re
+
+
 class CustomMeta(type):
-    @staticmethod
-    def keyname(key) -> str:
-        if not key.startswith("__") and not key.endswith("__"):
-            key = "custom_" + key
-        return key
+    def __new__(cls, name, bases, dct, **kwargs):
+        def _setattr_(self, name, value):
+            custom_name = "custom_" + name
+            object.__setattr__(self, custom_name, value)
 
-    def _new_setattr(cls, key, value):
-        cls.__class__.__base__.__setattr__(cls, CustomMeta.keyname(key), value)
-
-    def __new__(cls, name, bases, dct):
         new_dct = {}
-        for key in dct:
-            new_dct[CustomMeta.keyname(key)] = dct[key]
-        new_dct["__setattr__"] = cls._new_setattr
-        return super().__new__(cls, name, bases, new_dct)
 
-    def __setattr__(cls, key, value):
-        super().__setattr__(CustomMeta.keyname(key), value)
+        pattern = re.compile(r"(^__([A-Za-z_0-9]*)__$)")
+        for method in dct:
+            if pattern.match(method):
+                new_dct[method] = dct[method]
+            else:
+                custom_method = "custom_" + method
+                new_dct[custom_method] = dct[method]
+
+        new_dct["__setattr__"] = _setattr_
+        return super().__new__(cls, name, bases, new_dct, **kwargs)
+
+    def __init__(cls, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __call__(cls, *args, **kwargs):
+        return super().__call__(*args, **kwargs)
+
+    @classmethod
+    def __prepare__(cls, *args, **extra_kwargs):
+        return super().__prepare__(cls, *args, **extra_kwargs)
