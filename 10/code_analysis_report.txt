@@ -1,0 +1,19 @@
+[egor@vzpn 10]$ black -l 200 profiler.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+[egor@vzpn 10]$ flake8 --max-line-length 200 profiler.py
+[egor@vzpn 10]$ pylint profiler.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+[egor@vzpn 10]$ black -l 200 decorator.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+[egor@vzpn 10]$ flake8 --max-line-length 200 decorator.py
+[egor@vzpn 10]$ pylint decorator.py
+
+------------------------------------
+Your code has been rated at 10.00/10
+
+[egor@vzpn 10]$
