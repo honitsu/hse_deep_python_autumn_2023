@@ -1,1 +1,58 @@
-
+2023-12-14 02:24:25 DEBUG    Stdout logging activated
+2023-12-14 02:24:25 WARNING  Missing key: 1
+2023-12-14 02:24:25 INFO     New key 1 added to cache.
+2023-12-14 02:24:25 DEBUG    Existing key (1) has value: One
+2023-12-14 02:24:25 DEBUG    Stdout logging activated
+2023-12-14 02:24:25 ERROR    Cannot set value for key 1: cache has zero size
+2023-12-14 02:24:25 WARNING  Missing key: 1
+2023-12-14 02:24:25 DEBUG    Stdout logging activated
+2023-12-14 02:24:25 INFO     New key 1 added to cache.
+2023-12-14 02:24:25 INFO     Cache full. New key 2 will push out the oldest one.
+2023-12-14 02:24:25 INFO     Cache full. New key 3 will push out the oldest one.
+2023-12-14 02:24:25 INFO     Key 3 cache updated.
+2023-12-14 02:24:25 DEBUG    Existing key (3) has value: Три
+2023-12-14 02:24:25 WARNING  Missing key: 2
+2023-12-14 02:24:25 WARNING  Missing key: 1
+2023-12-14 02:24:31 DEBUG    Stdout logging activated
+2023-12-14 02:24:31 WARNING  Missing key: 1
+2023-12-14 02:24:31 INFO     New key 1 added to cache.
+2023-12-14 02:24:31 DEBUG    Existing key (1) has value: One
+2023-12-14 02:24:31 DEBUG    Stdout logging activated
+2023-12-14 02:24:31 ERROR    Cannot set value for key 1: cache has zero size
+2023-12-14 02:24:31 WARNING  Missing key: 1
+2023-12-14 02:24:31 DEBUG    Stdout logging activated
+2023-12-14 02:24:31 INFO     New key 1 added to cache.
+2023-12-14 02:24:31 INFO     Cache full. New key 2 will push out the oldest one.
+2023-12-14 02:24:31 INFO     Cache full. New key 3 will push out the oldest one.
+2023-12-14 02:24:31 DEBUG    Existing key (3) has value: Три
+2023-12-14 02:24:31 WARNING  Missing key: 2
+2023-12-14 02:24:31 WARNING  Missing key: 1
+2023-12-14 02:28:57 DEBUG    Stdout logging activated
+2023-12-14 02:28:57 WARNING  Missing key: 1
+2023-12-14 02:28:57 INFO     New key 1 added to cache.
+2023-12-14 02:28:57 DEBUG    Existing key (1) has value: One
+2023-12-14 02:28:57 DEBUG    Stdout logging activated
+2023-12-14 02:28:57 ERROR    Cannot set value for key 1: cache has zero size
+2023-12-14 02:28:57 WARNING  Missing key: 1
+2023-12-14 02:28:57 DEBUG    Stdout logging activated
+2023-12-14 02:28:57 INFO     New key 1 added to cache.
+2023-12-14 02:28:57 INFO     Cache full. New key 2 will push out the oldest one.
+2023-12-14 02:28:57 INFO     Cache full. New key 3 will push out the oldest one.
+2023-12-14 02:28:57 INFO     Key 3 cache updated.
+2023-12-14 02:28:57 DEBUG    Existing key (3) has value: Три
+2023-12-14 02:28:57 WARNING  Missing key: 2
+2023-12-14 02:28:57 WARNING  Missing key: 1
+2023-12-14 02:29:04 DEBUG    Stdout logging activated
+2023-12-14 02:29:04 WARNING  Missing key: 1
+2023-12-14 02:29:05 INFO     New key 1 added to cache.
+2023-12-14 02:29:05 DEBUG    Existing key (1) has value: One
+2023-12-14 02:29:05 DEBUG    Stdout logging activated
+2023-12-14 02:29:05 ERROR    Cannot set value for key 1: cache has zero size
+2023-12-14 02:29:05 WARNING  Missing key: 1
+2023-12-14 02:29:05 DEBUG    Stdout logging activated
+2023-12-14 02:29:05 INFO     New key 1 added to cache.
+2023-12-14 02:29:05 INFO     Cache full. New key 2 will push out the oldest one.
+2023-12-14 02:29:05 INFO     Cache full. New key 3 will push out the oldest one.
+2023-12-14 02:29:05 DEBUG    Existing key (3) has value: Три
+2023-12-14 02:29:05 WARNING  Missing key: 2
+2023-12-14 02:29:05 WARNING  Missing key: 1
