@@ -1,0 +1,19 @@
+egor@ubuntu01:~/dev/09$ black --line-length=200 hash_table.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/09$ flake8 hash_table.py
+egor@ubuntu01:~/dev/09$ pylint hash_table.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+egor@ubuntu01:~/dev/09$ black --line-length=200 test_hashtable.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/09$ flake8 test_hashtable.py
+egor@ubuntu01:~/dev/09$ pylint test_hashtable.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+egor@ubuntu01:~/dev/09$
