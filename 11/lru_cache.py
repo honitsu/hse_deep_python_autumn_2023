@@ -1,9 +1,11 @@
 import logging
 import sys
+import locale
 
 
 class CustomFormatter(logging.Formatter):
 
+    # Цвета для вывода журнала на консоль
     grey = "\x1b[38;20m"
     yellow = "\x1b[33;20m"
     red = "\x1b[31;20m"
@@ -21,6 +23,7 @@ class CustomFormatter(logging.Formatter):
 
     def format(self, record):  # pylint: disable=function-redefined
         log_fmt = self.FORMATS.get(record.levelno)
+        # Чт 14.12.2023 11:55:10
         formatter = logging.Formatter(log_fmt, datefmt="%a %d.%m.%Y %H:%M:%S")
         return formatter.format(record)
 
@@ -47,6 +50,7 @@ def _remove(node):
 
 class LRUCache:
     def setup_custom_logger(self, name):
+        locale.setlocale(locale.LC_TIME, locale="ru_RU.utf8")
         is_set = logging.getLogger(__name__).hasHandlers()
         formatter = logging.Formatter(fmt="%(asctime)s %(levelname)-8s %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
         handler = logging.FileHandler("cache.log", mode="a")
@@ -55,6 +59,7 @@ class LRUCache:
         logger.setLevel(logging.DEBUG)
         if self.use_filter:
             logger.addFilter(NoParsingFilter())
+            logger.debug("Log filtering is enabled.")
         if not is_set:
             logger.addHandler(handler)
         if self.use_stdout:
@@ -62,7 +67,7 @@ class LRUCache:
             screen_handler.setFormatter(CustomFormatter())
             if not is_set:
                 logger.addHandler(screen_handler)
-            logger.debug("Stdout logging activated")
+            logger.debug("Console output of logs is enabled.")
 
         return logger
 
@@ -76,15 +81,19 @@ class LRUCache:
         self.use_stdout = use_stdout
         self.use_filter = use_filter
         self.logger = self.setup_custom_logger(__name__)
+        self.logger.debug("LRUCache object created")
+
+    def __del__(self):
+        self.logger.debug("LRUCache object deleted")
 
     def get(self, key):
         if key in self.cache:
             node = self.cache[key]
             _remove(node)
             self._add(node)
-            self.logger.debug("Existing key (%s) has value: %s", key, node.value)
+            self.logger.debug("get() Existing key (%s) has value: %s", key, node.value)
             return node.value
-        self.logger.warning("Missing key: %s", key)
+        self.logger.warning("get() Missing key: %s", key)
         return None
 
     def set(self, key, value):
@@ -92,22 +101,24 @@ class LRUCache:
             if key in self.cache:
                 node = self.cache[key]
                 _remove(node)
-                self.logger.info("Key %s cache updated.", key)
+                self.logger.info("set() The value of the %s key has been updated in the cache.", key)
             elif len(self.cache) >= self.limit:
-                self.logger.info("Cache full. New key %s will push out the oldest one.", key)
+                self.logger.info("set() The cache is full. The new key %s will replace the oldest one (%s).", key, self.tail.prev.key)
+
                 del self.cache[self.tail.prev.key]
                 _remove(self.tail.prev)
             else:
-                self.logger.info("New key %s added to cache.", key)
+                self.logger.info("set() New key %s added to cache.", key)
 
             new_node = Node(key, value)
             self.cache[key] = new_node
             self._add(new_node)
         else:
-            self.logger.error("Cannot set value for key %s: cache has zero size", key)
+            self.logger.error("set() Cannot set value for key %s: cache has zero size", key)
 
     def _add(self, node):
         node.next = self.head.next
         node.prev = self.head
         self.head.next.prev = node
         self.head.next = node
+        self.logger.debug("New node added")

@@ -1,58 +1,108 @@
-2023-12-14 02:24:25 DEBUG    Stdout logging activated
-2023-12-14 02:24:25 WARNING  Missing key: 1
-2023-12-14 02:24:25 INFO     New key 1 added to cache.
-2023-12-14 02:24:25 DEBUG    Existing key (1) has value: One
-2023-12-14 02:24:25 DEBUG    Stdout logging activated
-2023-12-14 02:24:25 ERROR    Cannot set value for key 1: cache has zero size
-2023-12-14 02:24:25 WARNING  Missing key: 1
-2023-12-14 02:24:25 DEBUG    Stdout logging activated
-2023-12-14 02:24:25 INFO     New key 1 added to cache.
-2023-12-14 02:24:25 INFO     Cache full. New key 2 will push out the oldest one.
-2023-12-14 02:24:25 INFO     Cache full. New key 3 will push out the oldest one.
-2023-12-14 02:24:25 INFO     Key 3 cache updated.
-2023-12-14 02:24:25 DEBUG    Existing key (3) has value: Три
-2023-12-14 02:24:25 WARNING  Missing key: 2
-2023-12-14 02:24:25 WARNING  Missing key: 1
-2023-12-14 02:24:31 DEBUG    Stdout logging activated
-2023-12-14 02:24:31 WARNING  Missing key: 1
-2023-12-14 02:24:31 INFO     New key 1 added to cache.
-2023-12-14 02:24:31 DEBUG    Existing key (1) has value: One
-2023-12-14 02:24:31 DEBUG    Stdout logging activated
-2023-12-14 02:24:31 ERROR    Cannot set value for key 1: cache has zero size
-2023-12-14 02:24:31 WARNING  Missing key: 1
-2023-12-14 02:24:31 DEBUG    Stdout logging activated
-2023-12-14 02:24:31 INFO     New key 1 added to cache.
-2023-12-14 02:24:31 INFO     Cache full. New key 2 will push out the oldest one.
-2023-12-14 02:24:31 INFO     Cache full. New key 3 will push out the oldest one.
-2023-12-14 02:24:31 DEBUG    Existing key (3) has value: Три
-2023-12-14 02:24:31 WARNING  Missing key: 2
-2023-12-14 02:24:31 WARNING  Missing key: 1
-2023-12-14 02:28:57 DEBUG    Stdout logging activated
-2023-12-14 02:28:57 WARNING  Missing key: 1
-2023-12-14 02:28:57 INFO     New key 1 added to cache.
-2023-12-14 02:28:57 DEBUG    Existing key (1) has value: One
-2023-12-14 02:28:57 DEBUG    Stdout logging activated
-2023-12-14 02:28:57 ERROR    Cannot set value for key 1: cache has zero size
-2023-12-14 02:28:57 WARNING  Missing key: 1
-2023-12-14 02:28:57 DEBUG    Stdout logging activated
-2023-12-14 02:28:57 INFO     New key 1 added to cache.
-2023-12-14 02:28:57 INFO     Cache full. New key 2 will push out the oldest one.
-2023-12-14 02:28:57 INFO     Cache full. New key 3 will push out the oldest one.
-2023-12-14 02:28:57 INFO     Key 3 cache updated.
-2023-12-14 02:28:57 DEBUG    Existing key (3) has value: Три
-2023-12-14 02:28:57 WARNING  Missing key: 2
-2023-12-14 02:28:57 WARNING  Missing key: 1
-2023-12-14 02:29:04 DEBUG    Stdout logging activated
-2023-12-14 02:29:04 WARNING  Missing key: 1
-2023-12-14 02:29:05 INFO     New key 1 added to cache.
-2023-12-14 02:29:05 DEBUG    Existing key (1) has value: One
-2023-12-14 02:29:05 DEBUG    Stdout logging activated
-2023-12-14 02:29:05 ERROR    Cannot set value for key 1: cache has zero size
-2023-12-14 02:29:05 WARNING  Missing key: 1
-2023-12-14 02:29:05 DEBUG    Stdout logging activated
-2023-12-14 02:29:05 INFO     New key 1 added to cache.
-2023-12-14 02:29:05 INFO     Cache full. New key 2 will push out the oldest one.
-2023-12-14 02:29:05 INFO     Cache full. New key 3 will push out the oldest one.
-2023-12-14 02:29:05 DEBUG    Existing key (3) has value: Три
-2023-12-14 02:29:05 WARNING  Missing key: 2
-2023-12-14 02:29:05 WARNING  Missing key: 1
+2023-12-14 12:25:19 DEBUG    LRUCache object created
+2023-12-14 12:25:19 WARNING  get() Missing key: 1
+2023-12-14 12:25:19 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:19 DEBUG    New node added
+2023-12-14 12:25:19 DEBUG    New node added
+2023-12-14 12:25:19 DEBUG    get() Existing key (1) has value: One
+2023-12-14 12:25:19 DEBUG    LRUCache object created
+2023-12-14 12:25:19 DEBUG    LRUCache object deleted
+2023-12-14 12:25:19 ERROR    set() Cannot set value for key 1: cache has zero size
+2023-12-14 12:25:19 WARNING  get() Missing key: 1
+2023-12-14 12:25:19 DEBUG    LRUCache object created
+2023-12-14 12:25:19 DEBUG    LRUCache object deleted
+2023-12-14 12:25:19 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:19 DEBUG    New node added
+2023-12-14 12:25:19 INFO     set() The cache is full. The new key 2 will replace the oldest one (1).
+2023-12-14 12:25:19 DEBUG    New node added
+2023-12-14 12:25:19 INFO     set() The cache is full. The new key 3 will replace the oldest one (2).
+2023-12-14 12:25:19 DEBUG    New node added
+2023-12-14 12:25:19 INFO     set() The value of the 3 key has been updated in the cache.
+2023-12-14 12:25:19 DEBUG    New node added
+2023-12-14 12:25:19 DEBUG    New node added
+2023-12-14 12:25:19 DEBUG    get() Existing key (3) has value: Три
+2023-12-14 12:25:19 WARNING  get() Missing key: 2
+2023-12-14 12:25:19 WARNING  get() Missing key: 1
+2023-12-14 12:25:19 DEBUG    LRUCache object deleted
+2023-12-14 12:25:20 DEBUG    Console output of logs is enabled.
+2023-12-14 12:25:20 DEBUG    LRUCache object created
+2023-12-14 12:25:20 WARNING  get() Missing key: 1
+2023-12-14 12:25:20 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:20 DEBUG    New node added
+2023-12-14 12:25:20 DEBUG    New node added
+2023-12-14 12:25:20 DEBUG    get() Existing key (1) has value: One
+2023-12-14 12:25:20 DEBUG    Console output of logs is enabled.
+2023-12-14 12:25:20 DEBUG    LRUCache object created
+2023-12-14 12:25:20 DEBUG    LRUCache object deleted
+2023-12-14 12:25:20 ERROR    set() Cannot set value for key 1: cache has zero size
+2023-12-14 12:25:20 WARNING  get() Missing key: 1
+2023-12-14 12:25:20 DEBUG    Console output of logs is enabled.
+2023-12-14 12:25:21 DEBUG    LRUCache object created
+2023-12-14 12:25:21 DEBUG    LRUCache object deleted
+2023-12-14 12:25:21 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:21 DEBUG    New node added
+2023-12-14 12:25:21 INFO     set() The cache is full. The new key 2 will replace the oldest one (1).
+2023-12-14 12:25:21 DEBUG    New node added
+2023-12-14 12:25:21 INFO     set() The cache is full. The new key 3 will replace the oldest one (2).
+2023-12-14 12:25:21 DEBUG    New node added
+2023-12-14 12:25:21 INFO     set() The value of the 3 key has been updated in the cache.
+2023-12-14 12:25:21 DEBUG    New node added
+2023-12-14 12:25:21 DEBUG    New node added
+2023-12-14 12:25:21 DEBUG    get() Existing key (3) has value: Три
+2023-12-14 12:25:21 WARNING  get() Missing key: 2
+2023-12-14 12:25:21 WARNING  get() Missing key: 1
+2023-12-14 12:25:21 DEBUG    LRUCache object deleted
+2023-12-14 12:25:22 DEBUG    Console output of logs is enabled.
+2023-12-14 12:25:22 DEBUG    LRUCache object created
+2023-12-14 12:25:22 WARNING  get() Missing key: 1
+2023-12-14 12:25:22 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:22 DEBUG    New node added
+2023-12-14 12:25:22 DEBUG    New node added
+2023-12-14 12:25:22 DEBUG    get() Existing key (1) has value: One
+2023-12-14 12:25:22 DEBUG    Log filtering is enabled.
+2023-12-14 12:25:22 DEBUG    Console output of logs is enabled.
+2023-12-14 12:25:22 DEBUG    LRUCache object created
+2023-12-14 12:25:22 DEBUG    LRUCache object deleted
+2023-12-14 12:25:22 ERROR    set() Cannot set value for key 1: cache has zero size
+2023-12-14 12:25:22 WARNING  get() Missing key: 1
+2023-12-14 12:25:22 DEBUG    Log filtering is enabled.
+2023-12-14 12:25:22 DEBUG    Console output of logs is enabled.
+2023-12-14 12:25:22 DEBUG    LRUCache object created
+2023-12-14 12:25:22 DEBUG    LRUCache object deleted
+2023-12-14 12:25:22 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:22 DEBUG    New node added
+2023-12-14 12:25:22 INFO     set() The cache is full. The new key 2 will replace the oldest one (1).
+2023-12-14 12:25:22 DEBUG    New node added
+2023-12-14 12:25:22 INFO     set() The cache is full. The new key 3 will replace the oldest one (2).
+2023-12-14 12:25:22 DEBUG    New node added
+2023-12-14 12:25:22 DEBUG    New node added
+2023-12-14 12:25:22 DEBUG    New node added
+2023-12-14 12:25:22 DEBUG    get() Existing key (3) has value: Три
+2023-12-14 12:25:22 WARNING  get() Missing key: 2
+2023-12-14 12:25:22 WARNING  get() Missing key: 1
+2023-12-14 12:25:22 DEBUG    LRUCache object deleted
+2023-12-14 12:25:25 DEBUG    LRUCache object created
+2023-12-14 12:25:25 WARNING  get() Missing key: 1
+2023-12-14 12:25:25 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:25 DEBUG    New node added
+2023-12-14 12:25:25 DEBUG    New node added
+2023-12-14 12:25:25 DEBUG    get() Existing key (1) has value: One
+2023-12-14 12:25:25 DEBUG    Log filtering is enabled.
+2023-12-14 12:25:25 DEBUG    LRUCache object created
+2023-12-14 12:25:25 DEBUG    LRUCache object deleted
+2023-12-14 12:25:25 ERROR    set() Cannot set value for key 1: cache has zero size
+2023-12-14 12:25:25 WARNING  get() Missing key: 1
+2023-12-14 12:25:25 DEBUG    Log filtering is enabled.
+2023-12-14 12:25:25 DEBUG    LRUCache object created
+2023-12-14 12:25:25 DEBUG    LRUCache object deleted
+2023-12-14 12:25:25 INFO     set() New key 1 added to cache.
+2023-12-14 12:25:25 DEBUG    New node added
+2023-12-14 12:25:25 INFO     set() The cache is full. The new key 2 will replace the oldest one (1).
+2023-12-14 12:25:25 DEBUG    New node added
+2023-12-14 12:25:25 INFO     set() The cache is full. The new key 3 will replace the oldest one (2).
+2023-12-14 12:25:25 DEBUG    New node added
+2023-12-14 12:25:25 DEBUG    New node added
+2023-12-14 12:25:25 DEBUG    New node added
+2023-12-14 12:25:25 DEBUG    get() Existing key (3) has value: Три
+2023-12-14 12:25:25 WARNING  get() Missing key: 2
+2023-12-14 12:25:25 WARNING  get() Missing key: 1
+2023-12-14 12:25:25 DEBUG    LRUCache object deleted

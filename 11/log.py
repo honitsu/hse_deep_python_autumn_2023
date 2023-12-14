@@ -3,9 +3,9 @@ from lru_cache import LRUCache
 
 
 def main():
-    parser = argparse.ArgumentParser(description="LRUCache arg parser")
-    parser.add_argument("-s", action="store_true", help="This is the 's' variable")
-    parser.add_argument("-f", action="store_true", help="This is the 'f' variable")
+    parser = argparse.ArgumentParser(description="This module implements the LRUCache class, which logs rows of different levels in 'cache.log'.")
+    parser.add_argument("-s", action="store_true", help="Log messages to file and console")
+    parser.add_argument("-f", action="store_true", help="Do not log messages with word 'updated'")
     args = parser.parse_args()
     use_stdout = args.s
     use_filter = args.f
