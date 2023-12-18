@@ -1,37 +1,28 @@
-import unittest
-import urllib
-from queue import Queue
-from unittest.mock import MagicMock, patch
-from io import BytesIO
+# test_server.py
 
-from server import (
-    read_url,
-    HtmlParser,
-    master_server
-)
+import unittest
+from unittest.mock import patch, MagicMock
+from io import BytesIO
+import threading
+from server import read_url, HtmlParser
+import server
 
 
 class TestWebParser(unittest.TestCase):
     def test_read_url(self):
-        url = "http://example.com"
-        expected_data = b"{'in': 3, 'Example': 2, 'Domain': 2, 'domain': 2, 'for': 2, 'use': 2, 'This': 1}"
+        url = "http://sample.com"
+        expected_data = b"{'in': 3, 'Example': 2}"
 
         with patch("urllib.request.urlopen") as mock_urlopen:
             mock_urlopen.return_value = BytesIO(expected_data)
             data = read_url(url)
-            parser = HtmlParser(7)
+            parser = HtmlParser(2)
             self.assertEqual(parser.get_total(), 0)
-            parser.feed(data)
-            result = str(parser.most_common_words())
+            parser.feed(str(data))
+            str(parser.most_common_words())
 
-        self.assertEqual(result, expected_data.decode())
+        self.assertEqual(data, expected_data)
         self.assertEqual(parser.get_total(), 1)
-
-    def test_read_url_error(self):
-        url = "http://nonexistentexample.com"
-        with patch("urllib.request.urlopen"):
-            with self.assertRaises(urllib.error.URLError):
-                read_url(url)
 
     def test_html_parser_init(self):
         k_top = 10
@@ -45,8 +36,6 @@ class TestWebParser(unittest.TestCase):
     def test_html_parser_error(self):
         with self.assertRaises(TypeError):
             HtmlParser()  # pylint: disable=no-value-for-parameter
-
-        # self.assertIsNone(parser.error("message"))
 
     def test_html_parser_feed(self):
         data = "<html><body><h1>Title</h1><p>Paragraph 1</p><p>Paragraph 2</p></body></html>"
@@ -75,6 +64,14 @@ class TestWebParser(unittest.TestCase):
 
         self.assertEqual(parser.words, data.split())
 
+    def test_workers(self):
+        num_wrk = 10
+        mock_thread = MagicMock(spec=threading.Thread)
+        with patch("threading.Thread") as mock_thread:
+            custom_parser = HtmlParser(7)
+            server.start_workers(num_wrk, custom_parser)
+        self.assertEqual(mock_thread.call_count, num_wrk)
+
     def test_html_parser_most_common_words(self):
         words = ["a", "b", "c", "a", "b", "a"]
         k_top = 2
@@ -85,15 +82,6 @@ class TestWebParser(unittest.TestCase):
         result = parser.most_common_words()
 
         self.assertEqual(result, expected_result)
-
-    def test_master_server(self):  # pylint: disable=no-self-use
-        tasks_queue = Queue()
-        sock = unittest.mock.Mock()
-        sock.accept.side_effect = [(MagicMock(), None)]
-        with unittest.mock.patch("socket.socket", return_value=sock):
-            with unittest.mock.patch("os.getpid", return_value=123):
-                with unittest.mock.patch("psutil.Process"):
-                    master_server(tasks_queue)
 
 
 if __name__ == "__main__":

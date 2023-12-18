@@ -1,25 +1,37 @@
-[egor@mail 06]$ flake8 --max-line-length 132 client.py
-[egor@mail 06]$ flake8 --max-line-length 132 server.py
-[egor@mail 06]$ pylint client.py
+egor@ubuntu01:~/dev/06$ black --line-length=200 client.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/06$ flake8 client.py
+egor@ubuntu01:~/dev/06$ pylint client.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@mail 06]$ pylint server.py
+egor@ubuntu01:~/dev/06$ black --line-length=200 server.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/06$ flake8 server.py
+egor@ubuntu01:~/dev/06$ pylint server.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@mail 06]$ flake8 --max-line-length 132 test_server.py
-[egor@mail 06]$ flake8 --max-line-length 132 test_client.py
-[egor@mail 06]$ pylint test_server.py
-
--------------------------------------------------------------------
-Your code has been rated at 10.00/10 (previous run: 9.86/10, +0.14)
-
-[egor@mail 06]$ pylint test_client.py
+egor@ubuntu01:~/dev/06$ black --line-length=200 test_client.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/06$ flake8 test_client.py
+egor@ubuntu01:~/dev/06$ pylint test_client.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@mail 06]$
+egor@ubuntu01:~/dev/06$ black --line-length=200 test_server.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/06$ flake8 test_server.py
+egor@ubuntu01:~/dev/06$ pylint test_server.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+egor@ubuntu01:~/dev/06$

@@ -1,3 +1,5 @@
+# server.py
+
 import socket
 import errno
 import os
@@ -6,7 +8,7 @@ import argparse
 from queue import Queue
 from html.parser import HTMLParser
 from collections import Counter
-from urllib.request import urlopen
+from urllib import request
 from nltk.tokenize import RegexpTokenizer
 import psutil
 
@@ -15,8 +17,8 @@ ENDMARK = "EOF"
 
 
 def read_url(url):
-    with urlopen(url, timeout=10) as data:
-        return data.read().decode()
+    with request.urlopen(url, timeout=10) as data:
+        return data.read()
 
 
 class HtmlParser(HTMLParser):
@@ -31,8 +33,8 @@ class HtmlParser(HTMLParser):
         self.total_calls = 0
         self.words = []
 
-    def error(self, message):
-        pass
+    # def error(self, message):
+    #    pass
 
     def feed(self, data):
         self.words = []
@@ -64,7 +66,8 @@ def process_requests(tasks, parser):
                 print(f"Stop process_requests {threading.current_thread().name}")
                 break
             try:
-                parser.feed(read_url(url))
+                data = read_url(url)
+                parser.feed(data.decode())
                 most_common_words = parser.most_common_words()
                 client.send(str(most_common_words).encode())
                 print(f"Total URLs processed: {parser.get_total()}")
