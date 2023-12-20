@@ -1,97 +1,86 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import patch
 import asyncio
-import aiohttp
+import pytest
+import httpx
 import fetcher
 
 
-class TestFileReader(unittest.TestCase):
-    def test_read_urls_list(self):
-        urls_file = "test_urls.txt"
-        urls = fetcher.read_urls_list(urls_file)
-        self.assertEqual(
-            urls,
-            [
-                "https://2ip.ru",
-                "https://amazon.de",
-                "https://example.com",
-                "https://github.com",
-                "https://google.com",
-                "http://test.co.jp"
-            ],
-        )
+# Счётчик строк в файле
+@staticmethod
+def count_newlines(fname):
+    def _make_gen(reader):
+        while True:
+            buf = reader(2 ** 16)
+            if not buf:
+                break
+            yield buf
+
+    with open(fname, "rb") as file:
+        return sum(buf.count(b"\n") for buf in _make_gen(file.raw.read))
 
 
-class TestCounters(unittest.TestCase):
-    stats = fetcher.Info()
-
-    def test_add_good(self):
-        self.stats.add_good()
-        self.assertEqual(self.stats.get_good(), 1)
-
-    def test_add_bad(self):
-        self.stats.add_bad()
-        self.stats.add_bad()
-        self.assertEqual(self.stats.get_bad(), 2)
-
-    def test_add_total(self):
-        self.stats.add_total()
-        self.assertEqual(self.stats.get_total(), 4)
-
-class TestData(unittest.TestCase):
-    stats = fetcher.Info()
-
-    def test_get_data(self):
-        urls = fetcher.read_urls_list("test_urls.txt")
-        ret = fetcher.get_data(urls, 10, self.stats)
-        self.assertEqual(self.stats.get_good(), 6)
-
-class TestFetcherss(unittest.TestCase):
-    stats = fetcher.Info()
-
+# class TestFetchers(unittest.IsolatedAsyncioTestCase):
+class TestFetchers(unittest.TestCase):
     def setUp(self):
-        self.urls = [
-            "https://example.com",
-            "https://mail.ru",
-            "https://2ip.ru",
-            "https://amazon.de",
-        ]
-        self.concurrent_requests = 2
-        self.session_mock = Mock(spec=aiohttp.ClientSession)
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self.loop)
 
-    def test_fetch_urls(self):
-        mock_results = [
-            "This domain is for use in illustrative examples in documents.",
-            "* @param {*} s Имя метрики, если прилетает не стринга, то это как бы коммит, все собранные радары дёргаются в одном запросе",
-            "Анонимайзер",
-            "Wir helfen dir</div>",
-        ]
+    @pytest.mark.asyncio
+    @pytest.mark.timeout(5)
+    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
+    def test_fetchers2_10(self, mocker):
+        url_file = "10urls.txt"
+        lines_in_file = count_newlines(url_file)
+        stats = fetcher.start_fetchers(url_file, 2)
+        self.assertEqual(stats.get_good(), stats.get_total())
+        self.assertEqual(lines_in_file, stats.get_total())
+        self.assertEqual(lines_in_file, mocker.call_count)
 
-        results = self.loop.run_until_complete(fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats))
-        for num, res in enumerate(results):
-            self.assertEqual(res.count(mock_results[num]), 1)
+    @pytest.mark.asyncio
+    @pytest.mark.timeout(5)
+    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
+    def test_fetchers10_10(self, mocker):
+        url_file = "10urls.txt"
+        lines_in_file = count_newlines(url_file)
+        stats = fetcher.start_fetchers(url_file, 10)
+        self.assertEqual(stats.get_good(), stats.get_total())
+        self.assertEqual(lines_in_file, stats.get_total())
+        self.assertEqual(lines_in_file, mocker.call_count)
 
-    def test_fetch_invalid_urls(self):
-        self.urls = [
-            "https://docs.aiohttp.org/en/stable/client_ref.html",
-            "https://sarkariresult.com",
-        ]
-        results = self.loop.run_until_complete(fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats))
-        self.assertEqual(results, ["Error: 404", "Error: 403"])
-        self.assertEqual(self.stats.get_bad(), 2)
+    @pytest.mark.asyncio
+    @pytest.mark.timeout(5)
+    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
+    def test_fetchers3_103(self, mocker):
+        url_file = "urls.txt"
+        lines_in_file = count_newlines(url_file)
+        stats = fetcher.start_fetchers(url_file, 3)
+        self.assertEqual(stats.get_good(), stats.get_total())
+        self.assertEqual(lines_in_file, stats.get_total())
+        self.assertEqual(lines_in_file, mocker.call_count)
 
-    def test_fetch_no_urls(self):
-        self.concurrent_requests = 0
-        self.urls = []
-        save_good = self.stats.get_good()
-        save_bad = self.stats.get_bad()
-        save_total = self.stats.get_total()
-        self.loop.run_until_complete(fetcher.fetch_urls(self.urls, self.concurrent_requests, self.stats))
-        self.assertEqual(self.stats.get_good(), save_good)
-        self.assertEqual(self.stats.get_bad(), save_bad)
-        self.assertEqual(self.stats.get_total(), save_total)
+    @pytest.mark.asyncio
+    @pytest.mark.timeout(5)
+    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
+    def test_fetchers10_103(self, mocker):
+        url_file = "urls.txt"
+        lines_in_file = count_newlines(url_file)
+        stats = fetcher.start_fetchers(url_file, 10)
+        self.assertEqual(stats.get_good(), stats.get_total())
+        self.assertEqual(lines_in_file, stats.get_total())
+        self.assertEqual(lines_in_file, mocker.call_count)
+
+    @pytest.mark.asyncio
+    @pytest.mark.timeout(5)
+    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
+    def test_fetchers1000_1kk(self, mocker):
+        url_file = "100k_urls.txt"
+        lines_in_file = count_newlines(url_file)
+        stats = fetcher.start_fetchers(url_file, 1000)
+        self.assertEqual(stats.get_good(), stats.get_total())
+        self.assertEqual(lines_in_file, stats.get_total())
+        self.assertEqual(lines_in_file, mocker.call_count)
 
 
-    # if __name__ == "__main__":
-    # unittest.main()
+if __name__ == "__main__":
+    unittest.main()

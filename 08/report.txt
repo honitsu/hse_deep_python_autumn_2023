@@ -1,21 +1,20 @@
-[egor@vzpn 08]$ black -l 200 fetcher.py
-All done! ✨ 🍰 ✨
-1 file left unchanged.
-[egor@vzpn 08]$ black -l 200 test_fetcher.py
-reformatted test_fetcher.py
-
+egor@ubuntu01:~/dev/08$ black --line-length=200 fetcher.py
+reformatted fetcher.py
 All done! ✨ 🍰 ✨
 1 file reformatted.
-[egor@vzpn 08]$ flake8 --max-line-length 200 fetcher.py
-[egor@vzpn 08]$ flake8 --max-line-length 200 test_fetcher.py
-[egor@vzpn 08]$ pylint fetcher.py
+egor@ubuntu01:~/dev/08$ flake8 fetcher.py
+egor@ubuntu01:~/dev/08$ pylint fetcher.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@vzpn 08]$ pylint test_fetcher.py
+egor@ubuntu01:~/dev/08$ black --line-length=200 test_fetcher.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/08$ flake8 test_fetcher.py
+egor@ubuntu01:~/dev/08$ pylint test_fetcher.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@vzpn 08]$
+egor@ubuntu01:~/dev/08$

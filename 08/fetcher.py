@@ -1,10 +1,10 @@
-import asyncio
+# fetcher.py
 import argparse
-from pathlib import Path
-import aiohttp
+import asyncio
+import aiofiles
+import httpx
 
-
-DIR = "./www"
+EOF = "EOF"
 
 
 class Info:
@@ -33,82 +33,81 @@ class Info:
     def get_total(self):
         return self.__total
 
+    def print(self):
+        print(f"\nGood: {self.get_good()}\nBad: {self.get_bad()}\nTotal: {self.get_total()}\n")
+
+
+def get_hostname(url):
+    url = url.replace("http://", "")
+    url = url.replace("https://", "")
+    url = url.replace("www.", "")
+    return url
+
 
 async def fetch_url(session, url, stats):
-    try:
-        async with session.get(url, timeout=15) as response:
-            if response.status == 200:
-                stats.add_good()
-                return await response.text()
-            stats.add_bad()
-            return f"Error: {response.status}"
-    except asyncio.TimeoutError:  # pragma: no cover
-        return "Error: Timeout"
+    ret = await session.get(url)
+    if ret.status_code == 200:
+        stats.add_good()
+    else:
+        stats.add_bad()
+    if __name__ == "__main__":
+        print(f"{get_hostname(url)[:30]:30s} {ret}")
+    return ret
 
 
-async def fetch_urls(urls, concurrent_requests, stats):
-    if concurrent_requests < 1:
-        concurrent_requests = 1
-        print("Concurrent requests value changed to 1")
-    asyncio.get_event_loop()
-    async with aiohttp.ClientSession() as session:
-
-        tasks = []
-        semaphore = asyncio.Semaphore(concurrent_requests)
-
-        for url in urls:
-            # Use semaphore to limit the concurrent requests
-            async with semaphore:
-                tasks.append(asyncio.ensure_future(fetch_url(session, url, stats)))
-
-        return await asyncio.gather(*tasks)
+async def read_urls_list(urls_file, queue):
+    async with aiofiles.open(urls_file, "r", encoding="utf-8") as file:
+        async for line in file:
+            await queue.put(line.strip())
+        await queue.put(EOF)
 
 
-def read_urls_list(urls_file):
-    with open(urls_file, "r", encoding="utf-8") as file:
-        urls = [line.strip() for line in file]
-    return urls
+async def fetch_urls(session, queue, queue_task, stats):
+    while True:
+        url = await queue.get()
+        if url == EOF:
+            await queue.put(url)
+            queue.task_done()
+            break
+        await fetch_url(session, url, stats)
+        queue.task_done()
+    return
 
 
-def save_results(save_dir, urls, results):  # pragma: no cover
-    Path(save_dir).mkdir(parents=True, exist_ok=True)
-    for url, result in zip(urls, results):
-        urlc = url
-        for expr_subst in (
-            ("http://", ""),
-            ("https://", ""),
-            ("/", ""),
-            ("www.", ""),
-        ):
-            urlc = urlc.replace(*expr_subst)
-        urlc = f"{save_dir}/{urlc}.html"
-        with open(urlc, "w", encoding="utf-8") as file:
-            file.write(f"URL: {url}\nResponse: {result}\n\n")
+async def get_data(urls_file, concurrent_requests, stats):
+    queue = asyncio.Queue(maxsize=concurrent_requests * 5)
+    queue_task = asyncio.create_task(read_urls_list(urls_file, queue))
+
+    async with httpx.AsyncClient() as session:
+        tasks = [asyncio.create_task(fetch_urls(session, queue, queue_task, stats)) for _ in range(concurrent_requests)]
+
+        await queue.join()
+        await queue_task
+        await asyncio.wait(tasks)
 
 
-def get_data(urls, concurrent_requests, stats):
+def start_fetchers(urls_file, workers):
+    stats = Info()
     loop = asyncio.get_event_loop()
-    return loop.run_until_complete(fetch_urls(urls, concurrent_requests, stats))
+    try:
+        loop.run_until_complete(get_data(urls_file, concurrent_requests=workers, stats=stats))
+    finally:
+        loop.close()
+    return stats
 
 
 def main():  # pragma: no cover
     parser = argparse.ArgumentParser(description="Asynchronous URL fetcher")
-    parser.add_argument("concurrent_requests", type=int, help="number of concurrent requests")
-    parser.add_argument("urls_file", type=str, help="file containing list of URLs")
-
+    parser.add_argument("concurrent_requests", type=int, help="Number of concurrent requests")
+    parser.add_argument("urls_file", type=str, help="File, containing list of URLs")
     args = parser.parse_args()
-    concurrent_requests = args.concurrent_requests
-    if concurrent_requests < 1:
-        print(f"Invalid number of concurrent requests: {concurrent_requests}." " Should be positive integer.")
+    workers = int(args.concurrent_requests)
+    if workers < 1 or workers > 32000:
+        print(f"Invalid number of concurrent requests: {workers}. Should be in range 1-32000")
         return
-    urls_file = args.urls_file
-
-    stats = Info()
-    urls = read_urls_list(urls_file)
-    get_data(urls, concurrent_requests, stats)
-    # save_results(DIR, urls, results)
-    print(f"Good: {stats.get_good()}\nBad: {stats.get_bad()}\nTotal: {stats.get_total()}\n")
+    stats = start_fetchers(args.urls_file, workers)
+    stats.print()
 
 
-#if __name__ == "__main__":
-#    main()
+if __name__ == "__main__":
+    main()  # pragma: no cover
