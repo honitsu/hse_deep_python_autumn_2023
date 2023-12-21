@@ -1,39 +1,38 @@
-[egor@vzpn 04]$ black -l 200 custom_meta.py
+egor@ubuntu01:~/dev/04$ black --line-length=200 custom_meta.py
 All done! ✨ 🍰 ✨
 1 file left unchanged.
-[egor@vzpn 04]$ black -l 200 test_custom_meta.py
-All done! ✨ 🍰 ✨
-1 file left unchanged.
-[egor@vzpn 04]$ flake8 custom_meta.py
-[egor@vzpn 04]$ flake8 test_custom_meta.py
-[egor@vzpn 04]$ pylint custom_meta.py
+egor@ubuntu01:~/dev/04$ flake8 custom_meta.py
+egor@ubuntu01:~/dev/04$ pylint custom_meta.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@vzpn 04]$ pylint test_custom_meta.py
-
--------------------------------------------------------------------
-Your code has been rated at 10.00/10 (previous run: 7.03/10, +2.97)
-
-[egor@vzpn 04]$
-
-[egor@vzpn 04]$ black -l 200 descriptors.py
+egor@ubuntu01:~/dev/04$ black --line-length=200 descriptors.py
 All done! ✨ 🍰 ✨
 1 file left unchanged.
-[egor@vzpn 04]$ black -l 200 test_descriptors.py
-All done! ✨ 🍰 ✨
-1 file left unchanged.
-[egor@vzpn 04]$ flake8 descriptors.py
-[egor@vzpn 04]$ flake8 test_descriptors.py
-[egor@vzpn 04]$ pylint descriptors.py
+egor@ubuntu01:~/dev/04$ flake8 descriptors.py
+egor@ubuntu01:~/dev/04$ pylint descriptors.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@vzpn 04]$ pylint test_descriptors.py
+egor@ubuntu01:~/dev/04$ black --line-length=200 test_custom_meta.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/04$ flake8 test_custom_meta.py
+egor@ubuntu01:~/dev/04$ pylint test_custom_meta.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@vzpn 04]$
+egor@ubuntu01:~/dev/04$ black --line-length=200 test_descriptors.py
+reformatted test_descriptors.py
+All done! ✨ 🍰 ✨
+1 file reformatted.
+egor@ubuntu01:~/dev/04$ flake8 test_descriptors.py
+egor@ubuntu01:~/dev/04$ pylint test_descriptors.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+egor@ubuntu01:~/dev/04$

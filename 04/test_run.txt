@@ -1,0 +1,31 @@
+egor@ubuntu01:~/dev/04$
+egor@ubuntu01:~/dev/04$
+egor@ubuntu01:~/dev/04$ ./test_custom_meta.py
+test_01_info (__main__.TestCustomMeta) ... ok
+test_04_attribs (__main__.TestCustomMeta) ... ok
+test_05_methods (__main__.TestCustomMeta) ... ok
+test_10_members (__main__.TestCustomMeta) ... ok
+test_20_custom_members (__main__.TestCustomMeta) ... ok
+test_30_added_members (__main__.TestCustomMeta) ... ok
+test_40_error_dynamic (__main__.TestCustomMeta) ... ok
+test_50_new_custom_var (__main__.TestCustomMeta) ... ok
+test_60_breaking_the_rules (__main__.TestCustomMeta) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.005s
+
+OK
+egor@ubuntu01:~/dev/04$ ./test_descriptors.py
+test_integer_descriptor (__main__.TestDescriptors) ... ok
+test_positive_descriptor (__main__.TestDescriptors) ... ok
+test_positive_descriptor_negative_value (__main__.TestDescriptors) ... ok
+test_positive_descriptor_non_integer_value (__main__.TestDescriptors) ... ok
+test_set_invalid_value (__main__.TestDescriptors) ... ok
+test_set_new_valid_value (__main__.TestDescriptors) ... ok
+test_string_descriptor (__main__.TestDescriptors) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.006s
+
+OK
+egor@ubuntu01:~/dev/04$

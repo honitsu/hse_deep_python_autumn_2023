@@ -1,5 +1,9 @@
+# descriptors.py
+from pydantic.types import PositiveInt
+
+
 class Integer:
-    def __get__(self, instance, owner):
+    def __get__(self, instance, owner) -> int:
         return instance.__dict__[self.name]
 
     def __set__(self, instance, value):
@@ -12,7 +16,7 @@ class Integer:
 
 
 class String:
-    def __get__(self, instance, owner):
+    def __get__(self, instance, owner) -> str:
         return instance.__dict__[self.name]
 
     def __set__(self, instance, value):
@@ -25,7 +29,7 @@ class String:
 
 
 class PositiveInteger:
-    def __get__(self, instance, owner):
+    def __get__(self, instance, owner) -> PositiveInt:
         return instance.__dict__[self.name]
 
     def __set__(self, instance, value):
