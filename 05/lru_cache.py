@@ -31,16 +31,17 @@ class LRUCache:
         return None
 
     def set(self, key, value):
-        if key in self.cache:
-            node = self.cache[key]
-            _remove(node)
-        elif len(self.cache) >= self.limit:
-            del self.cache[self.tail.prev.key]
-            _remove(self.tail.prev)
+        if self.limit > 0:
+            if key in self.cache:
+                node = self.cache[key]
+                _remove(node)
+            elif len(self.cache) >= self.limit:
+                del self.cache[self.tail.prev.key]
+                _remove(self.tail.prev)
 
-        new_node = Node(key, value)
-        self.cache[key] = new_node
-        self._add(new_node)
+            new_node = Node(key, value)
+            self.cache[key] = new_node
+            self._add(new_node)
 
     def _add(self, node):
         node.next = self.head.next
