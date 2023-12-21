@@ -1,25 +1,38 @@
-[egor@mail 05]$ black *py
-reformatted lru_cache.py
-
+egor@ubuntu01:~/dev/05$ black --line-length=200 lru_cache.py
 All done! ✨ 🍰 ✨
-1 file reformatted, 1 file left unchanged.
-[egor@mail 05]$ flake8 *.py
-[egor@mail 05]$ pylint test_lru_cache.py lru_cache.py
+1 file left unchanged.
+egor@ubuntu01:~/dev/05$ flake8 lru_cache.py
+egor@ubuntu01:~/dev/05$ pylint lru_cache.py
 
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-[egor@mail 05]$ coverage run test_lru_cache.py
-.......
+egor@ubuntu01:~/dev/05$ black --line-length=200 test_lru_cache.py
+All done! ✨ 🍰 ✨
+1 file left unchanged.
+egor@ubuntu01:~/dev/05$ flake8 test_lru_cache.py
+egor@ubuntu01:~/dev/05$ pylint test_lru_cache.py
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+
+egor@ubuntu01:~/dev/05$ python3 -m coverage run test_lru_cache.py
+test_as_in_homework (__main__.LRUCacheTests) ... ok
+test_get_key_and_next (__main__.LRUCacheTests) ... ok
+test_red_update_prolongs_life (__main__.LRUCacheTests) ... ok
+test_size_0 (__main__.LRUCacheTests) ... ok
+test_size_1 (__main__.LRUCacheTests) ... ok
+test_size_2 (__main__.LRUCacheTests) ... ok
+
 ----------------------------------------------------------------------
-Ran 7 tests in 0.001s
+Ran 6 tests in 0.009s
 
 OK
-[egor@mail 05]$ coverage report -m
+egor@ubuntu01:~/dev/05$ python3 -m coverage report -m
 Name                Stmts   Miss  Cover   Missing
 -------------------------------------------------
-lru_cache.py           41      0   100%
-test_lru_cache.py      64      0   100%
+lru_cache.py           42      0   100%
+test_lru_cache.py      94      0   100%
 -------------------------------------------------
-TOTAL                 105      0   100%
-[egor@mail 05]$
+TOTAL                 136      0   100%
+egor@ubuntu01:~/dev/05$
