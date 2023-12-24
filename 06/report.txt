@@ -8,8 +8,9 @@ egor@ubuntu01:~/dev/06$ pylint client.py
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
 egor@ubuntu01:~/dev/06$ black --line-length=200 server.py
+reformatted server.py
 All done! ✨ 🍰 ✨
-1 file left unchanged.
+1 file reformatted.
 egor@ubuntu01:~/dev/06$ flake8 server.py
 egor@ubuntu01:~/dev/06$ pylint server.py
 
@@ -34,4 +35,4 @@ egor@ubuntu01:~/dev/06$ pylint test_server.py
 --------------------------------------------------------------------
 Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
 
-egor@ubuntu01:~/dev/06$
+egor@ubuntu01:~/dev/06$ 

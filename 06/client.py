@@ -1,15 +1,14 @@
+#!/usr/bin/env python3
 # client.py
 
 import socket
 import threading
 import argparse
 from queue import Queue
-import time
 
 
 DEFAULT_TCPPORT = 12345
 ENDMARK = "EOF"
-MAX_Q = 32
 BUFF = 1024
 
 
@@ -18,11 +17,11 @@ class Client:
     show_output = True
 
     def __init__(self, target_address, urls_file, workers):
+        assert workers > 0
         self.th_count = 0
-        self.urls_queue = Queue(MAX_Q)
         self.urls_file = urls_file
         self.workers = workers
-        assert workers > 0
+        self.urls_queue = Queue(workers * 2)
         pos = target_address.find(":")
         if pos == -1:
             self.tcp_port, self.target_address = DEFAULT_TCPPORT, target_address
@@ -36,8 +35,8 @@ class Client:
         sock = socket.socket()
         while self.server_ok:
             try:
-                url = self.urls_queue.get(timeout=2)
                 sock = socket.socket()
+                url = self.urls_queue.get(timeout=2)
                 sock.connect((self.target_address, self.tcp_port))
                 sock.sendall(url.encode())
                 if url != ENDMARK:
@@ -45,6 +44,7 @@ class Client:
                     if self.show_output:
                         print(f"{url.rstrip()}: {data.decode()}")
                 else:
+                    # self.urls_queue.put(url)
                     self.server_ok = False
             except ConnectionRefusedError:
                 print(f"Server not listening port {self.tcp_port}")
@@ -55,6 +55,7 @@ class Client:
                 pass
             finally:
                 sock.close()
+        sock.close()
 
     def url_process(self, url):
         pass
@@ -64,16 +65,13 @@ class Client:
             url = ""
             with open(self.urls_file, "r", encoding="utf-8") as file:
                 for url in file:
+                    url = url.rstrip()
                     self.url_process(url)
-                    delay = 0.5
-                    while self.urls_queue.full():
-                        time.sleep(delay)
-                        delay += 0.3
-                    self.urls_queue.put(url)
+                    self.urls_queue.put(url, block=True)
             file.close()
         except FileNotFoundError as err:
-            print(f"Cannot open file {self.urls_file}")
             print(f"{url} {type(err).__name__} was raised: {err}")
+            raise FileNotFoundError from err
         finally:
             self.urls_queue.put(ENDMARK)  # End mark
 

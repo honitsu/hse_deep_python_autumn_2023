@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # test_server.py
 
 import unittest
@@ -70,7 +71,7 @@ class TestWebParser(unittest.TestCase):
         with patch("threading.Thread") as mock_thread:
             custom_parser = HtmlParser(7)
             server.start_workers(num_wrk, custom_parser)
-        self.assertEqual(mock_thread.call_count, num_wrk)
+        self.assertEqual(mock_thread.call_count, num_wrk + 1)
 
     def test_html_parser_most_common_words(self):
         words = ["a", "b", "c", "a", "b", "a"]

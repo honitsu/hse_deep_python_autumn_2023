@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # server.py
 
 import socket
@@ -22,7 +23,6 @@ def read_url(url):
 
 
 class HtmlParser(HTMLParser):
-    # lock = threading.Semaphore(4)
     lock = threading.Lock()
 
     def __init__(self, k_top, *args, **kwargs):
@@ -32,9 +32,6 @@ class HtmlParser(HTMLParser):
         self.tokenizer = RegexpTokenizer(r"\w+")
         self.total_calls = 0
         self.words = []
-
-    # def error(self, message):
-    #    pass
 
     def feed(self, data):
         self.words = []
@@ -63,7 +60,6 @@ def process_requests(tasks, parser):
             url, client = tasks.get(timeout=5)
             if url == ENDMARK:
                 tasks.put((url, client))
-                print(f"Stop process_requests {threading.current_thread().name}")
                 break
             try:
                 data = read_url(url)
@@ -79,7 +75,7 @@ def process_requests(tasks, parser):
             pass
 
 
-def master_server(tasks_queue):
+def worker_reader(tasks_queue):
     sock = socket.socket()
     try:
         sock.bind(("localhost", TCPPORT))
@@ -92,7 +88,7 @@ def master_server(tasks_queue):
         process = psutil.Process(current_pid)
         process.terminate()
 
-    sock.listen(5)
+    sock.listen()
     try:
         while True:
             if threading.active_count() == 1:
@@ -104,26 +100,20 @@ def master_server(tasks_queue):
         current_system_pid = os.getpid()
         this_system = psutil.Process(current_system_pid)
         this_system.terminate()
-    except socket.timeout:
-        if threading.active_count() == 1:
-            print("Done: master_server finished")
+    #except socket.timeout:
+    #    if threading.active_count() == 1:
+    #        print("Done: worker_reader finished")
     finally:
         sock.close()
 
 
 def start_workers(worker_count, parser):
-    tasks_queue = Queue()
-    threads = [
-        threading.Thread(
-            target=process_requests,
-            args=(tasks_queue, parser),
-        )
-        for _ in range(worker_count)
-    ]
+    tasks_queue = Queue(worker_count * 2)
+    threads = [threading.Thread(target=process_requests, args=(tasks_queue, parser),) for _ in range(worker_count)]
+    threads.append(threading.Thread(target=worker_reader, args=(tasks_queue,)))
+
     for thread in threads:
         thread.start()
-
-    master_server(tasks_queue)
 
     for thread in threads:
         thread.join()

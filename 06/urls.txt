@@ -51,8 +51,6 @@ https://translate.google.com
 https://w.wiki/85gN
 https://tr.wikipedia.org
 https://uol.com.br
-https://walmart.com
-https://whatsapp.com
 https://wiktionary.org
 https://yandex.com
 https://ya.ru
@@ -79,7 +77,6 @@ http://www.craigslist.org
 http://www.diply.com
 http://www.dropbox.com
 http://www.ebay.com
-http://www.facebook.com
 http://www.fc2.com
 http://www.github.com
 http://www.gmw.cn

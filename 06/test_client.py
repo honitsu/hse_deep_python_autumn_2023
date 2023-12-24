@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # test_client.py
 
 import unittest
@@ -48,38 +49,49 @@ class TestClient(unittest.TestCase):
             Client(target_address="localhost", urls_file="urls.txt", workers=0)
 
     def test_start_threads(self):
-        # Запускаем многократно, меняя число потоков
-        for num_workers in (2, 3, 5, 7):
-            if num_workers == 2:
-                self.client = Client(target_address="localhost", urls_file=self.urls_file, workers=num_workers)
-            else:
+        my_ret_val = b"{'Pseudo': 3, 'Values': 2}"
+        # Запускаем многократно, меняя число запросов в файле
+        for self.urls_file in ("urls.txt", "10urls.txt", "33urls.txt"):
+            self.urls_file_lines = self.count_newlines(self.urls_file)
+            # Меняем число потоков
+            for num_workers in (2, 3, 5, 7):
                 self.client = Client(target_address="localhost:12345", urls_file=self.urls_file, workers=num_workers)
-            print(self.client.workers)
-            self.client.urls_queue = Queue()
-            # При запуске в 2 потока выводим строки на экран
-            if self.client.workers > 2:
+                print(f"File: {self.urls_file} Threads: {self.client.workers}")
+                self.client.urls_queue = Queue()
                 self.client.show_output = False
-
-            self.client.url_process = MagicMock()
-            mock_socket = MagicMock(spec=socket.socket)
-            with patch("socket.socket", return_value=mock_socket):
-                mock_socket.recv.return_value = b"{'Pseudo': 3, 'Values': 2}"
-                mock_socket.connect.return_value = None
-                mock_socket.close.return_value = None
-                self.client.start_threads()
-
-            # Счётчик подключений
-            self.assertEqual(mock_socket.connect.call_count, self.urls_file_lines + 1)
-            # Счётчик отправленных запросов
-            self.assertEqual(mock_socket.sendall.call_count, self.urls_file_lines + 1)
-            # Счётчик принятых ответов
-            self.assertEqual(mock_socket.recv.call_count, self.urls_file_lines)
-            # Число потоков + 1 (дополнительный поток читает url из файла и отправляет на обработку)
-            self.assertEqual(self.client.th_count, self.client.workers + 1)
-            # Счётчик прочитанных строк из файла с URL
-            self.assertEqual(self.client.url_process.call_count, self.urls_file_lines)
-            # Аргумент последнего вызова
-            self.assertEqual(self.client.url_process.call_args[0][0], "http://www.google.com.au\n")
+    
+                self.client.url_process = MagicMock()
+                mock_socket = MagicMock(spec=socket.socket)
+                with patch("socket.socket", return_value=mock_socket):
+                    mock_socket.recv.return_value = my_ret_val
+                    mock_socket.connect.return_value = None
+                    mock_socket.close.return_value = None
+                    self.client.start_threads()
+    
+                # Счётчик подключений
+                self.assertEqual(mock_socket.connect.call_count, self.urls_file_lines + 1)
+    
+                # Счётчик отправленных запросов
+                self.assertEqual(mock_socket.sendall.call_count, self.urls_file_lines + 1)
+    
+                # Счётчик принятых ответов
+                self.assertEqual(mock_socket.recv.call_count, self.urls_file_lines)
+    
+                # Число потоков + 1 (дополнительный поток читает url из файла и отправляет на обработку)
+                self.assertEqual(self.client.th_count, self.client.workers + 1)
+    
+                # Счётчик прочитанных строк из файла с URL
+                self.assertEqual(self.client.url_process.call_count, self.urls_file_lines)
+    
+                # Проверяем содержание отправленных запросов
+                with open(self.urls_file, "r", encoding="utf-8") as file:
+                    for url in file:
+                        url = url.rstrip()
+                        mock_socket.sendall.assert_any_call(url.encode("utf-8"))
+                file.close()
+    
+                # Проверяем содержание ответа
+                self.assertEqual(mock_socket.recv.return_value, my_ret_val)
 
 
 if __name__ == "__main__":
