@@ -33,16 +33,16 @@ async def fake_reply(url):
 class TestFetchers(unittest.IsolatedAsyncioTestCase):
     async def test_single_get(self):
         with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
-            URL1 = 'https://www.adobe.com/ru/'
-            URL2 = 'https://ar.wikipedia.org'
+            url1 = 'https://www.adobe.com/ru/'
+            url2 = 'https://ar.wikipedia.org'
             async with httpx.AsyncClient() as session:
-                ret = await fetcher.fetch_url(session, URL1)
+                ret = await fetcher.fetch_url(session, url1)
                 self.assertEqual(ret, ('https://www.adobe.com/ru/', 403, 'Forbidden'))
                 self.assertEqual(mocker.call_count, 1)
-                ret = await fetcher.fetch_url(session, URL2)
+                ret = await fetcher.fetch_url(session, url2)
                 self.assertEqual(ret, ('https://ar.wikipedia.org', 200, 'OK'))
                 self.assertEqual(mocker.call_count, 2)
-                expected_calls = [unittest.mock.call(URL1), unittest.mock.call(URL2)]
+                expected_calls = [unittest.mock.call(url1), unittest.mock.call(url2)]
                 self.assertEqual(expected_calls, mocker.mock_calls)
 
     async def test_01workers_010urls(self):
@@ -120,7 +120,6 @@ class TestFetchers(unittest.IsolatedAsyncioTestCase):
                     expected_ret.append((url, fret.status_code, fret.reason_phrase))
             self.assertEqual(sorted(expected_ret), sorted(ret))
 
-    '''
     async def test_25workers_1k_urls(self):
         with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
             url_file = "1k_urls.txt"
@@ -135,7 +134,6 @@ class TestFetchers(unittest.IsolatedAsyncioTestCase):
                     fret = await fake_reply(url)
                     expected_ret.append((url, fret.status_code, fret.reason_phrase))
             self.assertEqual(sorted(expected_ret), sorted(ret))
-    '''
 
 
 if __name__ == "__main__":
