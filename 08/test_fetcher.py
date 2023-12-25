@@ -38,8 +38,12 @@ class TestFetchers(unittest.IsolatedAsyncioTestCase):
             async with httpx.AsyncClient() as session:
                 ret = await fetcher.fetch_url(session, URL1)
                 self.assertEqual(ret, ('https://www.adobe.com/ru/', 403, 'Forbidden'))
+                self.assertEqual(mocker.call_count, 1)
                 ret = await fetcher.fetch_url(session, URL2)
                 self.assertEqual(ret, ('https://ar.wikipedia.org', 200, 'OK'))
+                self.assertEqual(mocker.call_count, 2)
+                expected_calls = [unittest.mock.call(URL1), unittest.mock.call(URL2)]
+                self.assertEqual(expected_calls, mocker.mock_calls)
 
     async def test_01workers_010urls(self):
         with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
