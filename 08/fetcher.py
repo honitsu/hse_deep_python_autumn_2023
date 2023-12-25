@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 # fetcher.py
+
 import argparse
 import asyncio
 import aiofiles
@@ -7,52 +9,13 @@ import httpx
 EOF = "EOF"
 
 
-class Info:
-    def __init__(self):
-        self.__good = 0
-        self.__bad = 0
-        self.__total = 0
-
-    def add_good(self):
-        self.__good += 1
-        self.add_total()
-
-    def add_bad(self):
-        self.__bad += 1
-        self.add_total()
-
-    def add_total(self):
-        self.__total += 1
-
-    def get_good(self):
-        return self.__good
-
-    def get_bad(self):
-        return self.__bad
-
-    def get_total(self):
-        return self.__total
-
-    def print(self):
-        print(f"\nGood: {self.get_good()}\nBad: {self.get_bad()}\nTotal: {self.get_total()}\n")
-
-
-def get_hostname(url):
-    url = url.replace("http://", "")
-    url = url.replace("https://", "")
-    url = url.replace("www.", "")
-    return url
-
-
-async def fetch_url(session, url, stats):
-    ret = await session.get(url)
-    if ret.status_code == 200:
-        stats.add_good()
-    else:
-        stats.add_bad()
-    if __name__ == "__main__":
-        print(f"{get_hostname(url)[:30]:30s} {ret}")
-    return ret
+async def fetch_url(session, url):
+    try:
+        ret = await session.get(url)
+        retval = (url, ret.status_code, ret.reason_phrase)
+    except Exception:
+        retval = (url, -1, "Error")
+    return retval
 
 
 async def read_urls_list(urls_file, queue):
@@ -62,38 +25,43 @@ async def read_urls_list(urls_file, queue):
         await queue.put(EOF)
 
 
-async def fetch_urls(session, queue, queue_task, stats):
+async def fetch_urls(session, queue):
+    retval = []
     while True:
         url = await queue.get()
         if url == EOF:
             await queue.put(url)
             queue.task_done()
             break
-        await fetch_url(session, url, stats)
+        try:
+            retval.append(tuple(await fetch_url(session, url)))
+        except Exception:  # Перестраховка
+            retval.append((url, -100, "Erron in fetch_url"))
         queue.task_done()
-    return
+    return retval
 
 
-async def get_data(urls_file, concurrent_requests, stats):
-    queue = asyncio.Queue(maxsize=concurrent_requests * 5)
+async def get_data(urls_file, concurrent_requests):
+    queue = asyncio.Queue(maxsize=concurrent_requests * 2)
     queue_task = asyncio.create_task(read_urls_list(urls_file, queue))
 
     async with httpx.AsyncClient() as session:
-        tasks = [asyncio.create_task(fetch_urls(session, queue, queue_task, stats)) for _ in range(concurrent_requests)]
+        tasks = [asyncio.create_task(fetch_urls(session, queue)) for _ in range(concurrent_requests)]
 
         await queue.join()
         await queue_task
-        await asyncio.wait(tasks)
+        value = await asyncio.gather(*tasks)
+        return value
 
 
-def start_fetchers(urls_file, workers):
-    stats = Info()
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(get_data(urls_file, concurrent_requests=workers, stats=stats))
-    finally:
-        loop.close()
-    return stats
+async def start_fetchers(urls_file, workers):
+    value = await get_data(urls_file, concurrent_requests=workers)
+    plain_array = []
+    # Convert array of arrays into single array
+    for task_data in value:
+        for val in task_data:
+            plain_array.append(val)
+    return plain_array
 
 
 def main():  # pragma: no cover
@@ -105,8 +73,9 @@ def main():  # pragma: no cover
     if workers < 1 or workers > 32000:
         print(f"Invalid number of concurrent requests: {workers}. Should be in range 1-32000")
         return
-    stats = start_fetchers(args.urls_file, workers)
-    stats.print()
+    ret = asyncio.run(start_fetchers(args.urls_file, workers))
+    for tup in ret:
+        print(tup)
 
 
 if __name__ == "__main__":

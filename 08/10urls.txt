@@ -1,3 +1,5 @@
+httpz://www.booking.com/index.ru.html
+ftp://speedtest.tele2.net/
 https://netflix.com
 http://example.com
 https://www.adobe.com/ru/
@@ -6,5 +8,3 @@ https://en.wikipedia.org/wiki/The_Other_Man%27s_Grass_Is_Always_Greener
 https://en.wikipedia.org/wiki/Tony_Hatch
 https://apple.com
 https://ar.wikipedia.org
-https://as.com
-https://www.booking.com/index.ru.html

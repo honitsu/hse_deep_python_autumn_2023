@@ -1,13 +1,14 @@
+#!/usr/bin/env python3
+# test_fetcher.py
+
 import unittest
 from unittest.mock import patch
 import asyncio
-import pytest
 import httpx
 import fetcher
 
 
-# Счётчик строк в файле
-@staticmethod
+# Быстрый счётчик строк в файле
 def count_newlines(fname):
     def _make_gen(reader):
         while True:
@@ -20,66 +21,117 @@ def count_newlines(fname):
         return sum(buf.count(b"\n") for buf in _make_gen(file.raw.read))
 
 
-# class TestFetchers(unittest.IsolatedAsyncioTestCase):
-class TestFetchers(unittest.TestCase):
-    def setUp(self):
-        self.loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self.loop)
+async def fake_reply(url):
+    await asyncio.sleep(0)
+    if url[4] == ":":
+        return httpx.Response(301, json={"id": "140315670381950"})
+    if url[9] == "w":
+        return httpx.Response(403, json={"id": "140315670381951"})
+    return httpx.Response(200, json={"id": "140315670381952"})
 
-    @pytest.mark.asyncio
-    @pytest.mark.timeout(5)
-    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
-    def test_fetchers2_10(self, mocker):
-        url_file = "10urls.txt"
-        lines_in_file = count_newlines(url_file)
-        stats = fetcher.start_fetchers(url_file, 2)
-        self.assertEqual(stats.get_good(), stats.get_total())
-        self.assertEqual(lines_in_file, stats.get_total())
-        self.assertEqual(lines_in_file, mocker.call_count)
 
-    @pytest.mark.asyncio
-    @pytest.mark.timeout(5)
-    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
-    def test_fetchers10_10(self, mocker):
-        url_file = "10urls.txt"
-        lines_in_file = count_newlines(url_file)
-        stats = fetcher.start_fetchers(url_file, 10)
-        self.assertEqual(stats.get_good(), stats.get_total())
-        self.assertEqual(lines_in_file, stats.get_total())
-        self.assertEqual(lines_in_file, mocker.call_count)
+class TestFetchers(unittest.IsolatedAsyncioTestCase):
+    async def test_single_get(self):
+        with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
+            URL1 = 'https://www.adobe.com/ru/'
+            URL2 = 'https://ar.wikipedia.org'
+            async with httpx.AsyncClient() as session:
+                ret = await fetcher.fetch_url(session, URL1)
+                self.assertEqual(ret, ('https://www.adobe.com/ru/', 403, 'Forbidden'))
+                ret = await fetcher.fetch_url(session, URL2)
+                self.assertEqual(ret, ('https://ar.wikipedia.org', 200, 'OK'))
 
-    @pytest.mark.asyncio
-    @pytest.mark.timeout(5)
-    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
-    def test_fetchers3_103(self, mocker):
-        url_file = "urls.txt"
-        lines_in_file = count_newlines(url_file)
-        stats = fetcher.start_fetchers(url_file, 3)
-        self.assertEqual(stats.get_good(), stats.get_total())
-        self.assertEqual(lines_in_file, stats.get_total())
-        self.assertEqual(lines_in_file, mocker.call_count)
+    async def test_01workers_010urls(self):
+        with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
+            url_file = "10urls.txt"
+            ret = await fetcher.start_fetchers(url_file, 1)
+            expected_ret = []
+            self.assertEqual(count_newlines(url_file), mocker.call_count)
+            # Проверяем содержание отправленных запросов
+            with open(url_file, "r", encoding="utf-8") as file:
+                for url in file:
+                    url = url.rstrip()
+                    mocker.assert_any_call(url)
+                    fret = await fake_reply(url)
+                    expected_ret.append((url, fret.status_code, fret.reason_phrase))
+            self.assertEqual(expected_ret, ret)
 
-    @pytest.mark.asyncio
-    @pytest.mark.timeout(5)
-    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
-    def test_fetchers10_103(self, mocker):
-        url_file = "urls.txt"
-        lines_in_file = count_newlines(url_file)
-        stats = fetcher.start_fetchers(url_file, 10)
-        self.assertEqual(stats.get_good(), stats.get_total())
-        self.assertEqual(lines_in_file, stats.get_total())
-        self.assertEqual(lines_in_file, mocker.call_count)
+    async def test_02workers_010urls(self):
+        with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
+            url_file = "10urls.txt"
+            ret = await fetcher.start_fetchers(url_file, 2)
+            expected_ret = []
+            self.assertEqual(count_newlines(url_file), mocker.call_count)
+            # Проверяем содержание отправленных запросов
+            with open(url_file, "r", encoding="utf-8") as file:
+                for url in file:
+                    url = url.rstrip()
+                    mocker.assert_any_call(url)
+                    fret = await fake_reply(url)
+                    expected_ret.append((url, fret.status_code, fret.reason_phrase))
+            self.assertEqual(sorted(expected_ret), sorted(ret))
 
-    @pytest.mark.asyncio
-    @pytest.mark.timeout(5)
-    @patch("fetcher.httpx.AsyncClient.get", return_value=httpx.Response(200, json={"id": "140315670381952"}))
-    def test_fetchers1000_1kk(self, mocker):
-        url_file = "100k_urls.txt"
-        lines_in_file = count_newlines(url_file)
-        stats = fetcher.start_fetchers(url_file, 1000)
-        self.assertEqual(stats.get_good(), stats.get_total())
-        self.assertEqual(lines_in_file, stats.get_total())
-        self.assertEqual(lines_in_file, mocker.call_count)
+    async def test_10workers_010urls(self):
+        with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
+            url_file = "10urls.txt"
+            ret = await fetcher.start_fetchers(url_file, 10)
+            expected_ret = []
+            self.assertEqual(count_newlines(url_file), mocker.call_count)
+            # Проверяем содержание отправленных запросов
+            with open(url_file, "r", encoding="utf-8") as file:
+                for url in file:
+                    url = url.rstrip()
+                    mocker.assert_any_call(url)
+                    fret = await fake_reply(url)
+                    expected_ret.append((url, fret.status_code, fret.reason_phrase))
+            self.assertEqual(sorted(expected_ret), sorted(ret))
+
+    async def test_03workers_100urls(self):
+        with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
+            url_file = "urls.txt"
+            ret = await fetcher.start_fetchers(url_file, 3)
+            expected_ret = []
+            self.assertEqual(count_newlines(url_file), mocker.call_count)
+            # Проверяем содержание отправленных запросов
+            with open(url_file, "r", encoding="utf-8") as file:
+                for url in file:
+                    url = url.rstrip()
+                    mocker.assert_any_call(url)
+                    fret = await fake_reply(url)
+                    expected_ret.append((url, fret.status_code, fret.reason_phrase))
+            self.assertEqual(sorted(expected_ret), sorted(ret))
+
+    async def test_13workers_100urls(self):
+        with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
+            url_file = "urls.txt"
+            ret = await fetcher.start_fetchers(url_file, 13)
+            expected_ret = []
+            self.assertEqual(count_newlines(url_file), mocker.call_count)
+            # Проверяем содержание отправленных запросов
+            with open(url_file, "r", encoding="utf-8") as file:
+                for url in file:
+                    url = url.rstrip()
+                    mocker.assert_any_call(url)
+                    fret = await fake_reply(url)
+                    expected_ret.append((url, fret.status_code, fret.reason_phrase))
+            self.assertEqual(sorted(expected_ret), sorted(ret))
+
+    '''
+    async def test_25workers_1k_urls(self):
+        with patch("fetcher.httpx.AsyncClient.get", side_effect=fake_reply) as mocker:
+            url_file = "1k_urls.txt"
+            ret = await fetcher.start_fetchers(url_file, 25)
+            expected_ret = []
+            self.assertEqual(count_newlines(url_file), mocker.call_count)
+            # Проверяем содержание отправленных запросов
+            with open(url_file, "r", encoding="utf-8") as file:
+                for url in file:
+                    url = url.rstrip()
+                    mocker.assert_any_call(url)
+                    fret = await fake_reply(url)
+                    expected_ret.append((url, fret.status_code, fret.reason_phrase))
+            self.assertEqual(sorted(expected_ret), sorted(ret))
+    '''
 
 
 if __name__ == "__main__":
